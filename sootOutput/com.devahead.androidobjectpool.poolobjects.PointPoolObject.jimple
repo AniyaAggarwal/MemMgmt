@@ -1,0 +1,14 @@
+public class com.devahead.androidobjectpool.poolobjects.PointPoolObject extends android.graphics.Point
+{
+
+    public void <init>()
+    {
+        com.devahead.androidobjectpool.poolobjects.PointPoolObject $r0;
+
+        $r0 := @this: com.devahead.androidobjectpool.poolobjects.PointPoolObject;
+
+        specialinvoke $r0.<android.graphics.Point: void <init>()>();
+
+        return;
+    }
+}

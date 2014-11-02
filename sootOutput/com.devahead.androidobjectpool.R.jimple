@@ -1,0 +1,14 @@
+public final class com.devahead.androidobjectpool.R extends java.lang.Object
+{
+
+    public void <init>()
+    {
+        com.devahead.androidobjectpool.R $r0;
+
+        $r0 := @this: com.devahead.androidobjectpool.R;
+
+        specialinvoke $r0.<java.lang.Object: void <init>()>();
+
+        return;
+    }
+}

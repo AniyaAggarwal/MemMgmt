@@ -1,0 +1,43 @@
+public final class com.devahead.androidobjectpool.R$id extends java.lang.Object
+{
+    public static final int testExceedPoolBtn;
+    public static final int testExceedPoolText;
+    public static final int testFullPoolBtn;
+    public static final int testFullPoolText;
+    public static final int testHalfPoolBtn;
+    public static final int testHalfPoolText;
+    public static final int testNoPoolBtn;
+    public static final int testNoPoolText;
+
+    public void <init>()
+    {
+        com.devahead.androidobjectpool.R$id $r0;
+
+        $r0 := @this: com.devahead.androidobjectpool.R$id;
+
+        specialinvoke $r0.<java.lang.Object: void <init>()>();
+
+        return;
+    }
+
+    public static void <clinit>()
+    {
+        <com.devahead.androidobjectpool.R$id: int testNoPoolText> = 2131034113;
+
+        <com.devahead.androidobjectpool.R$id: int testNoPoolBtn> = 2131034112;
+
+        <com.devahead.androidobjectpool.R$id: int testHalfPoolText> = 2131034115;
+
+        <com.devahead.androidobjectpool.R$id: int testHalfPoolBtn> = 2131034114;
+
+        <com.devahead.androidobjectpool.R$id: int testFullPoolText> = 2131034117;
+
+        <com.devahead.androidobjectpool.R$id: int testFullPoolBtn> = 2131034116;
+
+        <com.devahead.androidobjectpool.R$id: int testExceedPoolText> = 2131034119;
+
+        <com.devahead.androidobjectpool.R$id: int testExceedPoolBtn> = 2131034118;
+
+        return;
+    }
+}

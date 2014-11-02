@@ -1,0 +1,50 @@
+class dummyMainClass
+{
+
+    public static void dummyMainMethod()
+    {
+        int $i0;
+        com.devahead.androidobjectpool.MainActivity $r0;
+        android.os.Bundle $r1;
+        android.view.View $r2;
+
+        $i0 = 0;
+
+     label1:
+        if $i0 == 0 goto label3;
+
+        $r0 = new com.devahead.androidobjectpool.MainActivity;
+
+        specialinvoke $r0.<com.devahead.androidobjectpool.MainActivity: void <init>()>();
+
+        if $i0 == 1 goto label3;
+
+        $r1 = new android.os.Bundle;
+
+        specialinvoke $r1.<android.os.Bundle: void <init>()>();
+
+        virtualinvoke $r0.<com.devahead.androidobjectpool.MainActivity: void onCreate(android.os.Bundle)>($r1);
+
+     label2:
+        $r2 = new android.view.View;
+
+        specialinvoke $r2.<android.view.View: void <init>(android.content.Context)>($r0);
+
+        virtualinvoke $r0.<com.devahead.androidobjectpool.MainActivity: void onClick(android.view.View)>($r2);
+
+        if $i0 == 3 goto label2;
+
+        if $i0 == 4 goto label2;
+
+        if $i0 == 5 goto label2;
+
+        if $i0 == 6 goto label3;
+
+        if $i0 == 7 goto label2;
+
+     label3:
+        if $i0 == 9 goto label1;
+
+        return;
+    }
+}
