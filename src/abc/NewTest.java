@@ -15,6 +15,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import soot.G;
 import soot.MethodOrMethodContext;
 import soot.PackManager;
+import soot.PhaseOptions;
 import soot.PointsToAnalysis;
 import soot.Scene;
 import soot.SootClass;
@@ -26,8 +27,11 @@ import soot.jimple.infoflow.InfoflowResults;
 import soot.jimple.infoflow.android.SetupApplication;
 import soot.options.Options;
 import soot.options.PurityOptions;
+import soot.options.SETOptions;
+import soot.options.SparkOptions;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.util.dot.DotGraph;
+import soot.jimple.spark.SparkTransformer;
 import soot.jimple.toolkits.annotation.logic.Loop;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Targets;
@@ -53,7 +57,7 @@ public class NewTest {
 		args =new String[0];
 		SetupApplication app = new SetupApplication("C:\\Program Files (x86)\\Android\\android-sdk\\platforms","C:\\Users\\Ani\\Desktop\\AndroidObjectPool.apk");
 		try {		
-			app.calculateSourcesSinksEntrypoints("E:\\Program Analysis Workspace\\Flowdroid_Test\\SourcesAndSinks.txt");
+			app.calculateSourcesSinksEntrypoints("E:\\eclipseprojects\\git\\Flowdroid_Test\\SourcesAndSinks.txt");
 		} 
 		catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -77,17 +81,23 @@ public class NewTest {
 		Options.v().set_output_format(Options.output_format_jimple);
 		
 		Options.v().setPhaseOption("cg.spark", "on");
-		Options.v().set_whole_program(true);	
-		
 
+		Options.v().set_whole_program(true);	
 //		Scene.v().addBasicClass("HelloWorld");	
 		Scene.v().loadNecessaryClasses();
+		soot.PhaseOptions.v().setPhaseOptionIfUnset("cg.spark", "verbose");
+	//	soot.PhaseOptions.v().setPhaseOptionIfUnset("cg.spark", "simple-edges-bidirectional");
+		//soot.PhaseOptions.v().setPhaseOptionIfUnset("cg.spark", "set-impl");
+	//	int i = SparkOptions.set_impl_hybrid;
+		
+	
 		
 		SootMethod entryPoint = app.getEntryPointCreator().createDummyMain();		
 		Options.v().set_main_class(entryPoint.getSignature());		
 		Scene.v().setEntryPoints(Collections.singletonList(entryPoint));		
 		System.out.println(entryPoint.getActiveBody());
 		PackManager.v().runPacks();	
+		
 		
 		app_classes = new HashSet<SootClass>();
 		for( SootClass c: Scene.v().getClasses()){
@@ -101,6 +111,7 @@ public class NewTest {
 		System.out.println(app_classes);
 		
 		CallGraph cg = Scene.v().getCallGraph();
+		//SparkTransformer.v().transform(phaseName, options)
 		
 		pa = Scene.v().getPointsToAnalysis();
 		

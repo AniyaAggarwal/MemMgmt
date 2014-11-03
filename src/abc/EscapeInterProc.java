@@ -109,7 +109,7 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 		copy(f, o);
 		
 		Map<Local, Set<Local>> points_to_map = new HashMap<Local, Set<Local>>();
-		
+		Set<Local> new_locals = new HashSet<Local>();
 		
 	//	if(! method.getDeclaringClass().toString().equals("dummyMainClass")){
 		if(NewTest.app_classes.contains(method.getDeclaringClass())){
@@ -118,26 +118,35 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 			for(Value v: na.newExprMap.keySet()){
 				if(!f.contains(v)){
 					m.put(v, na.newExprMap.get(v));
+					if(v instanceof Local)
+						new_locals.add((Local)v);
 				}
 			}
 			
 			
-			for(Value v: m.keySet()){
-				Local mylocal = (Local)v;
-				EscapeInterProc.printLocalIntersects(local_chain, mylocal, points_to_map);
+			MyPointsToAnalysis my_pta = new MyPointsToAnalysis(method);
+			System.out.println("\n\nintersect map is:...\n\n\n"+ my_pta.getLocalIntersects(new_locals));
+			
+		//	for(Value v: m.keySet()){
 				
-			}
+				
+				
+			//	EscapeInterProc.printLocalIntersects(local_chain, mylocal, points_to_map);	
+		//	}
 			
-			System.out.println("\n\n\n\nThe points-to map is: \n\n"+points_to_map);
+//			System.out.println("\n\n\n\nThe points-to map is: \n\n"+points_to_map);
 			
 			
-			/* Find the loops present in the method */
+		/* Find the loops present in the method */
 		/*	LoopFinder loopFinder = new LoopFinder();
 			loopFinder.transform(body);
 			Collection<Loop> loops = loopFinder.loops();
 			if(loops.size() >0){
 				for(Loop l : loops){
-					List<Stmt> loop_stmt = l.getLoopStatements(); 
+					List<Stmt> loop_stmt = l.getLoopStatements();
+			//		Body bh = new Body(loop_stmt);
+			//		BriefUnitGraph loop_graph = new BriefUnitGraph(l.getLoopStatements());
+					System.out.println(loop_stmt);
 					for(Map.Entry<Value, Set<Unit>> e: m.entrySet()){
 						Value val = e.getKey();
 						Set<Unit> set = e.getValue();
@@ -251,6 +260,7 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 	private static void printLocalIntersects(Chain<Local>/*<Integer,Local>*/ ls, Local mylocal, Map<Local, Set<Local>> points_to_map) {
 		
 		soot.PointsToAnalysis pta = NewTest.pa;
+		
 		Set<PointsToSet> set = new HashSet<PointsToSet>();
 	
 		Set<Local> points_to_vars = new HashSet<Local>();
