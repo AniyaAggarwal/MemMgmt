@@ -1,5 +1,5 @@
 package abc;
-import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,42 +13,33 @@ import soot.Body;
 import soot.G;
 import soot.Local;
 import soot.PointsToSet;
-import soot.SootClass;
 import soot.SootMethod;
-import soot.Type;
 import soot.Unit;
-import soot.UnitBox;
 import soot.Value;
-import soot.ValueBox;
 import soot.jimple.Stmt;
-import soot.jimple.internal.ImmediateBox;
-import soot.jimple.internal.JimpleLocal;
-import soot.jimple.spark.sets.DoublePointsToSet;
 import soot.jimple.toolkits.annotation.logic.Loop;
 import soot.jimple.toolkits.annotation.logic.LoopFinder;
 import soot.jimple.toolkits.annotation.purity.SootMethodFilter;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.options.PurityOptions;
 import soot.toolkits.graph.BriefUnitGraph;
+import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.FlowSet;
+import soot.toolkits.scalar.LiveLocals;
 import soot.util.Chain;
-
 
 class EscapeInterProc extends AbstractInterproceduralAnalysis{
 	
-	Map<SootMethod, Set<String>> summaries;   // = new HashMap<SootClass, Map<SootMethod, Set<String>>>();
+	Map<SootMethod, Set<String>> summaries;
 	
 	Map<SootMethod, Map<Unit, Loop>> loop_reset = new HashMap<SootMethod, Map<Unit,Loop>>();
 	
-	
 	static private class Filter implements SootMethodFilter {
-		public boolean want(SootMethod method) { 
-		
+		public boolean want(SootMethod method) {
 		//we can use this method to skip the analysis of java library functions..
 		
-		
-			// could be optimized with HashSet....
+			//could be optimized with HashSet....
 //			String c = method.getDeclaringClass().toString();
 //			String m = method.getName();
 //			String[][] o = PurityInterproceduralAnalysis.pureMethods;
@@ -64,21 +55,15 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 		}
 	}
 	
-	
 	public EscapeInterProc(CallGraph cg, Iterator<SootMethod> iterator, PurityOptions opt) {
 		// TODO Auto-generated constructor stub
-		super(cg, new Filter(), iterator, true);  //opt.dump_cg());
-	//	System.out.println(opt.dump_cg()+ "\t" + opt.dump_intra() + "\t"+ opt.dump_summaries()+ "\t"+opt.verbose());
-	//	System.out.println(cg +"\n\n");
-
+		super(cg, new Filter(), iterator, true);  
 		summaries = new HashMap<SootMethod, Set<String>>();
 		if(summaries == null){
 			System.out.println("Not enough space avaliable..");
 			System.exit(1);
 		}
-		
-		doAnalysis(true);   //opts.verbose());
-		
+		doAnalysis(true);
 	}
 
 	@Override
@@ -86,8 +71,6 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 		// TODO Auto-generated method stub
 		
 		//Call intra-procedural analysis for method.
-		
-		
 		G.v().out.println("Analyzing Method : "+ method.getSignature());
 		
 		Body body = method.retrieveActiveBody();
@@ -97,13 +80,14 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 		*/
 		
 		BriefUnitGraph bg = new BriefUnitGraph(body);
+		
 		NullnessAnalysis na = new NullnessAnalysis(bg, this);
 		Chain<Unit> units = body.getUnits();
-		//Map<Value, Type> map  = new HashMap<Value, Type>();
 		Chain<Local> local_chain = body.getLocals();
 		
 		//summary for a method is the inset obtained for the first unit in the method.
 		Unit unit = units.getFirst(); 
+		
 		FlowSet f  = na.inSetMap.get(unit);
 		
 		copy(f, o);
@@ -113,62 +97,166 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 		
 	//	if(! method.getDeclaringClass().toString().equals("dummyMainClass")){
 		if(NewTest.app_classes.contains(method.getDeclaringClass())){
-			/*get new object creation sites and check if these objects are being escaped from the method in concern*/
+			
+			/* get new object creation sites and check if these objects are being escaped from the method in concern */
 			Map<Value, Set<Unit>> m = new HashMap<Value, Set<Unit>>();
 			for(Value v: na.newExprMap.keySet()){
 				if(!f.contains(v)){
 					m.put(v, na.newExprMap.get(v));
-					if(v instanceof Local)
+				/*	if(v instanceof Local)
 						new_locals.add((Local)v);
+				*/
 				}
 			}
 			
+			/*get new object allocations present in loop*/
+			new_locals = getNewAllocInLoop(body, m);
 			
 			MyPointsToAnalysis my_pta = new MyPointsToAnalysis(method);
-			System.out.println("\n\nintersect map is:...\n\n\n"+ my_pta.getLocalIntersects(new_locals));
+			LiveLocals sll = new MyUseAnalysis(bg);
+			Map<Local, Set<Unit>> insert_before_map = detectInsPoint(sll, my_pta.getLocalIntersects(new_locals), units);
+			filter(insert_before_map, bg);
 			
+			System.out.println("Modified map...: "+ insert_before_map+"\n\n");
+			
+			/*
+			BFS bfs = new BFS(bg, my_pta.getLocalIntersects(new_locals));
+			System.out.println("\n\nintersect map is:..."+ my_pta.getLocalIntersects(new_locals)+"\n\n\n");
+			
+			System.out.println("bfs map "+bfs.getResultMap()+"\n\n");
+			*/
+		/*	
+			System.out.println("Use Analysis : \n\n");
+			//LiveLocals sll = new MyUseAnalysis(bg);
+			for(Unit u: body.getUnits()){
+				System.out.println(sll.getLiveLocalsBefore(u));
+				System.out.println(u);
+				System.out.println(sll.getLiveLocalsAfter(u)+"\n\n");
+			}
+		*/	
 		//	for(Value v: m.keySet()){
-				
-				
-				
-			//	EscapeInterProc.printLocalIntersects(local_chain, mylocal, points_to_map);	
+				//	EscapeInterProc.printLocalIntersects(local_chain, mylocal, points_to_map);	
 		//	}
-			
 //			System.out.println("\n\n\n\nThe points-to map is: \n\n"+points_to_map);
-			
-			
-		/* Find the loops present in the method */
-		/*	LoopFinder loopFinder = new LoopFinder();
-			loopFinder.transform(body);
-			Collection<Loop> loops = loopFinder.loops();
-			if(loops.size() >0){
-				for(Loop l : loops){
-					List<Stmt> loop_stmt = l.getLoopStatements();
-			//		Body bh = new Body(loop_stmt);
-			//		BriefUnitGraph loop_graph = new BriefUnitGraph(l.getLoopStatements());
-					System.out.println(loop_stmt);
-					for(Map.Entry<Value, Set<Unit>> e: m.entrySet()){
-						Value val = e.getKey();
-						Set<Unit> set = e.getValue();
-						for(Unit u : set){
-							if(loop_stmt.contains((Stmt)u)){
-								if(loop_reset.containsKey(method)){
-									loop_reset.get(method).put(u, l);
-								}
-								else{
-									Map<Unit, Loop> map = new HashMap<Unit, Loop>();
-									map.put(u, l);
-											
-									loop_reset.put(method, map);
-								}
-								
-							}
+		}		
+	}
+
+	private Set<Local> getNewAllocInLoop(Body body, Map<Value, Set<Unit>> m) {
+		// TODO Auto-generated method stub
+		
+		Set<Local> new_alloc_loop = new HashSet<Local>();
+		LoopFinder loopFinder = new LoopFinder();
+		loopFinder.transform(body);
+		Collection<Loop> loops = loopFinder.loops();
+		if(loops.size() >0){
+			for(Loop l : loops){
+				List<Stmt> loop_stmt = l.getLoopStatements();
+				for(Map.Entry<Value, Set<Unit>> e: m.entrySet()){
+					Value val = e.getKey();
+					Set<Unit> set = e.getValue();
+					for(Unit u : set){
+						if(loop_stmt.contains((Stmt)u)){
+							if(val instanceof Local)
+								new_alloc_loop.add((Local)val);
 						}
 					}
-					
 				}
-			}*/
-		}		
+				
+			}
+		}
+		
+		return new_alloc_loop;
+		
+	}
+
+	private void filter(Map<Local, Set<Unit>> instrument_map, UnitGraph g) {
+		// TODO Auto-generated method stub
+		Map<Local, Set<Unit>> map_copy = new HashMap<Local, Set<Unit>>();
+		Set<Unit> succs = new HashSet<Unit>();
+		
+		for(Map.Entry<Local, Set<Unit>>e: instrument_map.entrySet()){
+			Set<Unit>s = new HashSet<Unit>();
+			s.addAll(e.getValue());
+			map_copy.put(e.getKey(), s);
+			for(Unit u : e.getValue()){
+				succs.addAll(g.getSuccsOf(u));
+			}
+		}
+		for(Map.Entry<Local, Set<Unit>>e: map_copy.entrySet()){
+			Set<Unit> val = map_copy.get(e.getKey());
+			for(Unit u : val){
+				if(succs.contains(u)){
+					instrument_map.get(e.getKey()).remove(u);
+				}
+			}
+		}
+	}
+	
+	
+	
+//before and after both doesnot contain local and the objs pointing to it.
+	private Map<Local, Set<Unit>> detectInsPoint(LiveLocals sll,
+			Map<Local, Set<Local>> localIntersects, Chain<Unit> units) {
+		// TODO Auto-generated method stub
+		
+		Map<Local, Set<Unit>> map = new HashMap<Local, Set<Unit>>();
+		
+		for(Unit u: units){
+			List<Local> before = sll.getLiveLocalsBefore(u);
+			List<Local> after = sll.getLiveLocalsAfter(u);
+			for(Map.Entry<Local, Set<Local>> e: localIntersects.entrySet()){
+				Set<Local> myset = e.getValue();
+				Local key = e.getKey();
+		//		boolean aa_flag = true;
+				
+				if(!after.contains(key)){
+			//		aa_flag = false;
+					boolean a_flag = true;
+					for(Local l: myset){
+						if(after.contains(l)){
+							a_flag = false;
+							break;
+						}
+					}
+				
+					if(a_flag){
+						if(!before.contains(key)){
+							boolean b_flag = true;
+							for(Local l: myset){
+								if(before.contains(l)){
+									b_flag = false;
+									break;
+								}
+							}
+							if(b_flag)
+								addToMap(key, u, map);	
+						}/*
+						if(before.contains(key)){
+							addToMap(key, u, map);
+						}*/
+					}
+				}
+			}
+		
+		}
+		System.out.println("\n\nThe intersection map is... \n"+ map);
+		return map;
+		
+	}
+	
+	
+
+	private void addToMap(Local key, Unit u, Map<Local, Set<Unit>> map) {
+		// TODO Auto-generated method stub
+		Set<Unit> set;
+		if(!map.containsKey(key)){
+			set = new HashSet<Unit>();
+		}
+		else{
+			set = map.get(key);
+		}
+		set.add(u);
+		map.put(key, set);
 	}
 
 	@Override
