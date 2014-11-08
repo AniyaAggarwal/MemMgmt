@@ -37,12 +37,17 @@ public class com.devahead.androidobjectpool.MainActivity extends android.app.Act
         $i1 = 0;
 
      label1:
-        if $i1 < $i0 goto label3;
+        if $i1 < $i0 goto label4;
 
         $i1 = 0;
 
      label2:
-        if $i1 < $i0 goto label4;
+        if $i1 < $i0 goto label5;
+
+        $i1 = 0;
+
+     label3:
+        if $i1 < $i0 goto label6;
 
         staticinvoke <android.os.Debug: void stopAllocCounting()>();
 
@@ -62,7 +67,7 @@ public class com.devahead.androidobjectpool.MainActivity extends android.app.Act
 
         return;
 
-     label3:
+     label4:
         $r2 = new com.devahead.androidobjectpool.poolobjects.PointPoolObject;
 
         specialinvoke $r2.<com.devahead.androidobjectpool.poolobjects.PointPoolObject: void <init>()>();
@@ -73,12 +78,23 @@ public class com.devahead.androidobjectpool.MainActivity extends android.app.Act
 
         goto label1;
 
-     label4:
+     label5:
         $r2 = $r3[$i1];
 
         $i1 = $i1 + 1;
 
         goto label2;
+
+     label6:
+        $r2 = new com.devahead.androidobjectpool.poolobjects.PointPoolObject;
+
+        specialinvoke $r2.<com.devahead.androidobjectpool.poolobjects.PointPoolObject: void <init>()>();
+
+        $r3[$i1] = $r2;
+
+        $i1 = $i1 + 1;
+
+        goto label3;
     }
 
     public void onClick(android.view.View)
@@ -98,7 +114,7 @@ public class com.devahead.androidobjectpool.MainActivity extends android.app.Act
 
         $r3 = $r0.<com.devahead.androidobjectpool.MainActivity: android.widget.TextView testExceedPoolText>;
 
-        specialinvoke $r0.<com.devahead.androidobjectpool.MainActivity: void testPool(int,android.widget.TextView)>(120, $r3);
+        specialinvoke $r0.<com.devahead.androidobjectpool.MainActivity: void testPool(int,android.widget.TextView)>(1000, $r3);
 
      label1:
         return;

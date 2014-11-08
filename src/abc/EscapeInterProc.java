@@ -14,6 +14,7 @@ import soot.G;
 import soot.Local;
 import soot.PointsToSet;
 import soot.SootMethod;
+import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.Stmt;
@@ -34,6 +35,7 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 	Map<SootMethod, Set<String>> summaries;
 	
 	Map<SootMethod, Map<Unit, Loop>> loop_reset = new HashMap<SootMethod, Map<Unit,Loop>>();
+	Map<SootMethod, Map<Local, Set<Unit>>> result_map = new HashMap<SootMethod, Map<Local, Set<Unit>>>();
 	
 	static private class Filter implements SootMethodFilter {
 		public boolean want(SootMethod method) {
@@ -117,7 +119,9 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 			Map<Local, Set<Unit>> insert_before_map = detectInsPoint(sll, my_pta.getLocalIntersects(new_locals), units);
 			filter(insert_before_map, bg);
 			
-			System.out.println("Modified map...: "+ insert_before_map+"\n\n");
+		//	System.out.println("Modified map...: "+ insert_before_map+"\n\n");
+			if(insert_before_map.size()>0)
+				result_map.put(method, insert_before_map);
 			
 			/*
 			BFS bfs = new BFS(bg, my_pta.getLocalIntersects(new_locals));
@@ -208,7 +212,6 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 				Set<Local> myset = e.getValue();
 				Local key = e.getKey();
 		//		boolean aa_flag = true;
-				
 				if(!after.contains(key)){
 			//		aa_flag = false;
 					boolean a_flag = true;
@@ -376,6 +379,11 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 			}
 		}
 		points_to_map.put(mylocal, points_to_vars);
+	}
+
+	public Map<SootMethod, Map<Local, Set<Unit>>> getResultMap() {
+		// TODO Auto-generated method stub
+		return result_map;
 	}
 	
 }

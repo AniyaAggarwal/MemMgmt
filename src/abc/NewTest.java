@@ -13,6 +13,7 @@ import java.util.Set;
 import org.xmlpull.v1.XmlPullParserException;
 
 import soot.G;
+import soot.Local;
 import soot.MethodOrMethodContext;
 import soot.PackManager;
 import soot.PhaseOptions;
@@ -46,6 +47,8 @@ public class NewTest {
 	static Set<SootClass> app_classes;
 	
 	static PointsToAnalysis pa;
+	
+	static Map<SootMethod, Map<Local, Set<Unit>>> instrument_map;
 			
 	public NewTest() {	
 		// TODO Auto-generated constructor stub
@@ -55,7 +58,7 @@ public class NewTest {
 		// TODO Auto-generated method stub	
 		
 		args =new String[0];
-		SetupApplication app = new SetupApplication("C:\\Program Files (x86)\\Android\\android-sdk\\platforms","C:\\Users\\Ani\\Desktop\\AndroidObjectPool.apk");
+		SetupApplication app = new SetupApplication("C:\\Program Files (x86)\\Android\\android-sdk\\platforms","C:\\Users\\Ani\\Desktop\\AndroidObjectPoolBefore.apk");//"C:\\Users\\Ani\\Desktop\\new try\\ToyExample.apk");//"C:\\Users\\Ani\\Desktop\\AndroidObjectPool.apk");
 		try {		
 			app.calculateSourcesSinksEntrypoints("E:\\eclipseprojects\\git\\Flowdroid_Test\\SourcesAndSinks.txt");
 		} 
@@ -70,27 +73,32 @@ public class NewTest {
 		soot.G.reset();		
 		Options.v().set_src_prec(Options.src_prec_apk);		
 		
-		Options.v().set_process_dir(Collections.singletonList("C:\\Users\\Ani\\Desktop\\AndroidObjectPool.apk"));//"C:\\Users\\Ani\\Desktop\\new try\\ToyExample.apk"));//"E:\\Program Analysis Workspace\\test apk repo\\toytest\\ToyExample.apk"));
+		Options.v().set_process_dir(Collections.singletonList("C:\\Users\\Ani\\Desktop\\AndroidObjectPoolBefore.apk"));//"C:\\Users\\Ani\\Desktop\\new try\\ToyExample.apk"));//"C:\\Users\\Ani\\Desktop\\AndroidObjectPool.apk"));//"C:\\Users\\Ani\\Desktop\\new try\\ToyExample.apk"));//"E:\\Program Analysis Workspace\\test apk repo\\toytest\\ToyExample.apk"));
 		Options.v().set_android_jars("C:\\Program Files (x86)\\Android\\android-sdk\\platforms");		
 		Options.v().set_whole_program(true);		
 		Options.v().set_allow_phantom_refs(true);
-	//	Options.v().set_soot_classpath(System.getProperty("java.class.path"));
-	//	System.out.println(System.getProperty("java.class.path"));
-	//	Options.v().set_prepend_classpath(true);
+		
+		
+		Options.v().set_soot_classpath(System.getProperty("java.class.path"));
+		System.out.println(System.getProperty("java.class.path"));
+		Options.v().set_prepend_classpath(true);
+		
+		
 		Options.v().set_output_dir("E:\\Program Analysis Workspace\\MemoryOptimization\\sootOutput\\");
 		Options.v().set_output_format(Options.output_format_jimple);
 		
 		Options.v().setPhaseOption("cg.spark", "on");
 
 		Options.v().set_whole_program(true);	
-//		Scene.v().addBasicClass("HelloWorld");	
+		
+		Scene.v().addBasicClass("util.objectpool.PoolObject");
+		Scene.v().addBasicClass("util.objectpool.ObjectPool");
+		Scene.v().addBasicClass("util.objectpool.PoolObjectFactory");
+		
 		Scene.v().loadNecessaryClasses();
 		soot.PhaseOptions.v().setPhaseOptionIfUnset("cg.spark", "verbose");
 	//	soot.PhaseOptions.v().setPhaseOptionIfUnset("cg.spark", "simple-edges-bidirectional");
 		//soot.PhaseOptions.v().setPhaseOptionIfUnset("cg.spark", "set-impl");
-	//	int i = SparkOptions.set_impl_hybrid;
-		
-	
 		
 		SootMethod entryPoint = app.getEntryPointCreator().createDummyMain();		
 		Options.v().set_main_class(entryPoint.getSignature());		
@@ -98,6 +106,7 @@ public class NewTest {
 		System.out.println(entryPoint.getActiveBody());
 		PackManager.v().runPacks();	
 		
+		System.out.println(Scene.v().getClasses());
 		
 		app_classes = new HashSet<SootClass>();
 		for( SootClass c: Scene.v().getClasses()){
@@ -123,13 +132,18 @@ public class NewTest {
 		EscapeInterProc p =
 			    new EscapeInterProc(cg, Scene.v().getEntryPoints().iterator(), opt); 
 		
-		map = p.loop_reset;
+		instrument_map = p.getResultMap();
 		
-		System.out.println("Map is.."+ map)	;
-
-		for(SootMethod method : map.keySet()){
-			AndroidAnalysis a = new AndroidAnalysis(Scene.v().getMethod(method.getSignature()));
+		System.out.println("Instrument map is: "+instrument_map);
+		
+		for(SootMethod method : instrument_map.keySet()){
+			Instrumenter ins = new Instrumenter(Scene.v().getMethod(method.getSignature()), instrument_map.get(method));
 		}
+		
+
+	//	System.out.println(Scene.v().getClasses());
+		
+		PackManager.v().writeClass(Scene.v().getSootClass("com.devahead.androidobjectpool.poolobjects.PointPoolObjectFactory"));
 		
 		PackManager.v().writeOutput();
 		G.v().out.println("Done!!");
