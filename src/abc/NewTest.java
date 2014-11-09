@@ -142,9 +142,9 @@ public class NewTest {
 		
 
 	//	System.out.println(Scene.v().getClasses());
-		
+		PackManager.v().writeClass(Scene.v().getSootClass("android.graphics.Point"));
 		PackManager.v().writeClass(Scene.v().getSootClass("com.devahead.androidobjectpool.poolobjects.PointPoolObjectFactory"));
-		
+		PackManager.v().writeClass(Scene.v().getSootClass("java.lang.Object"));
 		PackManager.v().writeOutput();
 		G.v().out.println("Done!!");
 		
