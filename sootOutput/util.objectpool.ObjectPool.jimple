@@ -1,0 +1,131 @@
+public class util.objectpool.ObjectPool extends java.lang.Object
+{
+    protected final int MAX_FREE_OBJECT_INDEX;
+    protected util.objectpool.PoolObjectFactory factory;
+    public java.util.ArrayList freeObjects;
+    protected int freeObjectIndex;
+
+    public void <init>(util.objectpool.PoolObjectFactory, int)
+    {
+        util.objectpool.ObjectPool this;
+        util.objectpool.PoolObjectFactory factory;
+        int maxSize, temp$0, temp$2;
+        java.util.ArrayList temp$1;
+
+        this := @this: util.objectpool.ObjectPool;
+
+        factory := @parameter0: util.objectpool.PoolObjectFactory;
+
+        maxSize := @parameter1: int;
+
+        specialinvoke this.<java.lang.Object: void <init>()>();
+
+        temp$0 = -1;
+
+        this.<util.objectpool.ObjectPool: int freeObjectIndex> = temp$0;
+
+        this.<util.objectpool.ObjectPool: util.objectpool.PoolObjectFactory factory> = factory;
+
+        temp$1 = new java.util.ArrayList;
+
+        specialinvoke temp$1.<java.util.ArrayList: void <init>(int)>(maxSize);
+
+        this.<util.objectpool.ObjectPool: java.util.ArrayList freeObjects> = temp$1;
+
+        temp$2 = maxSize - 1;
+
+        this.<util.objectpool.ObjectPool: int MAX_FREE_OBJECT_INDEX> = temp$2;
+
+        return;
+    }
+
+    public synchronized util.objectpool.PoolObject newObject()
+    {
+        util.objectpool.ObjectPool this;
+        util.objectpool.PoolObject obj, temp$2, temp$6;
+        int temp$0, temp$4, temp$7, temp$8;
+        util.objectpool.PoolObjectFactory temp$1;
+        java.util.ArrayList temp$3;
+        java.lang.Object temp$5;
+
+        this := @this: util.objectpool.ObjectPool;
+
+        temp$0 = this.<util.objectpool.ObjectPool: int freeObjectIndex>;
+
+        if temp$0 == -1 goto label1;
+
+        goto label2;
+
+     label1:
+        temp$1 = this.<util.objectpool.ObjectPool: util.objectpool.PoolObjectFactory factory>;
+
+        temp$2 = interfaceinvoke temp$1.<util.objectpool.PoolObjectFactory: util.objectpool.PoolObject createPoolObject()>();
+
+        obj = temp$2;
+
+        goto label3;
+
+     label2:
+        temp$3 = this.<util.objectpool.ObjectPool: java.util.ArrayList freeObjects>;
+
+        temp$4 = this.<util.objectpool.ObjectPool: int freeObjectIndex>;
+
+        temp$5 = virtualinvoke temp$3.<java.util.ArrayList: java.lang.Object get(int)>(temp$4);
+
+        temp$6 = (util.objectpool.PoolObject) temp$5;
+
+        obj = temp$6;
+
+        temp$7 = this.<util.objectpool.ObjectPool: int freeObjectIndex>;
+
+        temp$8 = temp$7 + -1;
+
+        this.<util.objectpool.ObjectPool: int freeObjectIndex> = temp$8;
+
+     label3:
+        interfaceinvoke obj.<util.objectpool.PoolObject: void initializePoolObject()>();
+
+        return obj;
+    }
+
+    public synchronized void freeObject(util.objectpool.PoolObject)
+    {
+        util.objectpool.ObjectPool this;
+        util.objectpool.PoolObject obj;
+        int temp$0, temp$1, temp$2, temp$3;
+        java.util.ArrayList temp$4;
+
+        this := @this: util.objectpool.ObjectPool;
+
+        obj := @parameter0: util.objectpool.PoolObject;
+
+        if obj != null goto label1;
+
+        goto label3;
+
+     label1:
+        interfaceinvoke obj.<util.objectpool.PoolObject: void finalizePoolObject()>();
+
+        temp$0 = this.<util.objectpool.ObjectPool: int freeObjectIndex>;
+
+        temp$1 = this.<util.objectpool.ObjectPool: int MAX_FREE_OBJECT_INDEX>;
+
+        if temp$0 < temp$1 goto label2;
+
+        goto label3;
+
+     label2:
+        temp$2 = this.<util.objectpool.ObjectPool: int freeObjectIndex>;
+
+        temp$3 = temp$2 + 1;
+
+        this.<util.objectpool.ObjectPool: int freeObjectIndex> = temp$3;
+
+        temp$4 = this.<util.objectpool.ObjectPool: java.util.ArrayList freeObjects>;
+
+        virtualinvoke temp$4.<java.util.ArrayList: boolean add(java.lang.Object)>(obj);
+
+     label3:
+        return;
+    }
+}

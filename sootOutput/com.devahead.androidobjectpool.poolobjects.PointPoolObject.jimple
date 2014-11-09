@@ -1,4 +1,4 @@
-public class com.devahead.androidobjectpool.poolobjects.PointPoolObject extends android.graphics.Point
+public class com.devahead.androidobjectpool.poolobjects.PointPoolObject extends android.graphics.Point implements util.objectpool.PoolObject
 {
     int[] arr_a;
 
@@ -14,6 +14,15 @@ public class com.devahead.androidobjectpool.poolobjects.PointPoolObject extends 
         $r1 = newarray (int)[10000];
 
         $r0.<com.devahead.androidobjectpool.poolobjects.PointPoolObject: int[] arr_a> = $r1;
+
+        return;
+    }
+
+    public void finalizePoolObject()
+    {
+        com.devahead.androidobjectpool.poolobjects.PointPoolObject this_ref;
+
+        this_ref := @this: com.devahead.androidobjectpool.poolobjects.PointPoolObject;
 
         return;
     }
