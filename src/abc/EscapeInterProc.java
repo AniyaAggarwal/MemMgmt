@@ -1,11 +1,14 @@
 package abc;
 
+import instrument.InsUtil;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import soot.ArrayType;
@@ -17,6 +20,7 @@ import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
+import soot.jimple.GotoStmt;
 import soot.jimple.Stmt;
 import soot.jimple.toolkits.annotation.logic.Loop;
 import soot.jimple.toolkits.annotation.logic.LoopFinder;
@@ -36,6 +40,9 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 	
 	Map<SootMethod, Map<Unit, Loop>> loop_reset = new HashMap<SootMethod, Map<Unit,Loop>>();
 	Map<SootMethod, Map<Local, Set<Unit>>> result_map = new HashMap<SootMethod, Map<Local, Set<Unit>>>();
+	
+	
+	Map<Loop, Unit> loop_firstStmt = new HashMap<Loop, Unit>();
 	
 	static private class Filter implements SootMethodFilter {
 		public boolean want(SootMethod method) {
@@ -94,11 +101,16 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 		
 		copy(f, o);
 		
+		
 		Map<Local, Set<Local>> points_to_map = new HashMap<Local, Set<Local>>();
 		Set<Local> new_locals = new HashSet<Local>();
 		
 	//	if(! method.getDeclaringClass().toString().equals("dummyMainClass")){
 		if(NewTest.app_classes.contains(method.getDeclaringClass())){
+			
+			InsUtil util = new InsUtil();
+			util.setNewExprMap(na.newExprMap);
+			
 			
 			/* get new object creation sites and check if these objects are being escaped from the method in concern */
 			Map<Value, Set<Unit>> m = new HashMap<Value, Set<Unit>>();
@@ -111,6 +123,29 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 				}
 			}
 			
+			//For OptMethodCallInLoop heuristics
+			/*
+			if(m.size()>0){
+				Set<Unit> nonEscAlloc = new HashSet<Unit>();
+				for(Map.Entry<Value, Set<Unit>> e :m.entrySet()){
+					//check if non escaping variable is one of the parameters of the method
+					if(getFormalParamaters(method).contains(e.getKey())){
+						nonEscAlloc.addAll(e.getValue());
+					}	
+				}
+				NewTest.nonEscNewAlloc.put(method, nonEscAlloc);
+				
+			}
+			*/
+			
+			Set<Unit> nonEscAlloc = new HashSet<Unit>();
+			for(Set<Unit> u : m.values()){
+				nonEscAlloc.addAll(u);
+				
+			}
+			NewTest.nonEscNewAlloc.put(method, nonEscAlloc);
+			
+			
 			/*get new object allocations present in loop*/
 			new_locals = getNewAllocInLoop(body, m);
 			
@@ -119,9 +154,41 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 			Map<Local, Set<Unit>> insert_before_map = detectInsPoint(sll, my_pta.getLocalIntersects(new_locals), units);
 			filter(insert_before_map, bg);
 			
-		//	System.out.println("Modified map...: "+ insert_before_map+"\n\n");
-			if(insert_before_map.size()>0)
+			System.out.println("Modified map...: "+ insert_before_map+"\n\n");
+			
+			//if object needs to be saved before the first stmt after the loop..then make sure buffer saving occurs after the last stmt in the loop itself and not outside the loop
+			for(Entry<Local, Set<Unit>> e : insert_before_map.entrySet()){
+				for(Unit u : e.getValue()){
+					System.out.println(bg.getPredsOf(u));
+					for(Unit u1: bg.getPredsOf(u)){
+						System.out.println(bg.getPredsOf(u1));
+					}
+					
+					for(Unit u1 : loop_firstStmt.values()){
+						if(bg.getPredsOf(u).contains(u1)){
+							System.out.println(bg.getPredsOf(u1));
+							for(Unit u2:bg.getPredsOf(u1)){
+								if(u2 instanceof GotoStmt){
+									System.out.println(bg.getPredsOf(u2));
+									u = u2;
+								}
+							}
+							
+						}
+					}
+				}
+			}
+			
+			System.out.println("Modified map...: "+ insert_before_map+"\n\n");
+			
+			if(insert_before_map.size()>0){
 				result_map.put(method, insert_before_map);
+				util.setSavetoBuf(insert_before_map);
+			}
+			
+		//	System.out.println(na.newExprMap);
+		//	System.out.println(util.getNewExprMap());
+			NewTest.result_map.put(method, util);
 			
 			/*
 			BFS bfs = new BFS(bg, my_pta.getLocalIntersects(new_locals));
@@ -143,6 +210,7 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 		//	}
 //			System.out.println("\n\n\n\nThe points-to map is: \n\n"+points_to_map);
 		}		
+		
 	}
 
 	private Set<Local> getNewAllocInLoop(Body body, Map<Value, Set<Unit>> m) {
@@ -152,8 +220,17 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 		LoopFinder loopFinder = new LoopFinder();
 		loopFinder.transform(body);
 		Collection<Loop> loops = loopFinder.loops();
-		if(loops.size() >0){
+		
+		if(NewTest.app_classes.contains(body.getMethod().getDeclaringClass()) && loops.size()>0)
+		{
+			Set<Loop> set = new HashSet<Loop>();
+			set.addAll(loops);
+			NewTest.methodToLoop_map.put(body.getMethod(), set);
+		}
+			
+		if(loops.size() > 0){
 			for(Loop l : loops){
+				loop_firstStmt.put(l, l.getHead());
 				List<Stmt> loop_stmt = l.getLoopStatements();
 				for(Map.Entry<Value, Set<Unit>> e: m.entrySet()){
 					Value val = e.getKey();
@@ -208,11 +285,15 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 		for(Unit u: units){
 			List<Local> before = sll.getLiveLocalsBefore(u);
 			List<Local> after = sll.getLiveLocalsAfter(u);
+			System.out.println("\n"+before);
+			System.out.println(u);
+			System.out.println("\n"+after);
+			
 			for(Map.Entry<Local, Set<Local>> e: localIntersects.entrySet()){
 				Set<Local> myset = e.getValue();
 				Local key = e.getKey();
 		//		boolean aa_flag = true;
-				if(!after.contains(key)){
+				if(!after.contains(key)){    //if(!after.contains(key)){
 			//		aa_flag = false;
 					boolean a_flag = true;
 					for(Local l: myset){
@@ -242,7 +323,7 @@ class EscapeInterProc extends AbstractInterproceduralAnalysis{
 			}
 		
 		}
-		System.out.println("\n\nThe intersection map is... \n"+ map);
+	//	System.out.println("\n\nThe intersection map is... \n"+ map);
 		return map;
 		
 	}

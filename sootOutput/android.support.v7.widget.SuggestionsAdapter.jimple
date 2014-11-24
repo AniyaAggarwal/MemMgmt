@@ -1,0 +1,1704 @@
+class android.support.v7.widget.SuggestionsAdapter extends android.support.v4.widget.ResourceCursorAdapter implements android.view.View$OnClickListener
+{
+    private static final boolean DBG;
+    static final int INVALID_INDEX;
+    private static final java.lang.String LOG_TAG;
+    private static final int QUERY_LIMIT;
+    static final int REFINE_ALL;
+    static final int REFINE_BY_ENTRY;
+    static final int REFINE_NONE;
+    private boolean mClosed;
+    private int mFlagsCol;
+    private int mIconName1Col;
+    private int mIconName2Col;
+    private java.util.WeakHashMap mOutsideDrawablesCache;
+    private android.content.Context mProviderContext;
+    private int mQueryRefinement;
+    private android.app.SearchManager mSearchManager;
+    private android.support.v7.widget.SearchView mSearchView;
+    private android.app.SearchableInfo mSearchable;
+    private int mText1Col;
+    private int mText2Col;
+    private int mText2UrlCol;
+    private android.content.res.ColorStateList mUrlColor;
+
+    public void <init>(android.content.Context, android.support.v7.widget.SearchView, android.app.SearchableInfo, java.util.WeakHashMap)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.content.Context $r1, $r6;
+        android.support.v7.widget.SearchView $r2;
+        android.app.SearchableInfo $r3;
+        java.util.WeakHashMap $r4;
+        int $i0;
+        java.lang.Object $r5;
+        android.app.SearchManager $r7;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.content.Context;
+
+        $r2 := @parameter1: android.support.v7.widget.SearchView;
+
+        $r3 := @parameter2: android.app.SearchableInfo;
+
+        $r4 := @parameter3: java.util.WeakHashMap;
+
+        $i0 = <android.support.v7.appcompat.R$layout: int abc_search_dropdown_item_icons_2line>;
+
+        specialinvoke $r0.<android.support.v4.widget.ResourceCursorAdapter: void <init>(android.content.Context,int,android.database.Cursor,boolean)>($r1, $i0, null, 1);
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: boolean mClosed> = 0;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mQueryRefinement> = 1;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mText1Col> = -1;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mText2Col> = -1;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mText2UrlCol> = -1;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mIconName1Col> = -1;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mIconName2Col> = -1;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mFlagsCol> = -1;
+
+        $r6 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mContext>;
+
+        $r5 = virtualinvoke $r6.<android.content.Context: java.lang.Object getSystemService(java.lang.String)>("search");
+
+        $r7 = (android.app.SearchManager) $r5;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: android.app.SearchManager mSearchManager> = $r7;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: android.support.v7.widget.SearchView mSearchView> = $r2;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: android.app.SearchableInfo mSearchable> = $r3;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mProviderContext> = $r1;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: java.util.WeakHashMap mOutsideDrawablesCache> = $r4;
+
+        return;
+    }
+
+    private android.graphics.drawable.Drawable checkIconCache(java.lang.String)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        java.lang.String $r1;
+        java.util.WeakHashMap $r2;
+        java.lang.Object $r3;
+        android.graphics.drawable.Drawable$ConstantState $r4;
+        android.graphics.drawable.Drawable $r5;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: java.lang.String;
+
+        $r2 = $r0.<android.support.v7.widget.SuggestionsAdapter: java.util.WeakHashMap mOutsideDrawablesCache>;
+
+        $r3 = virtualinvoke $r2.<java.util.WeakHashMap: java.lang.Object get(java.lang.Object)>($r1);
+
+        $r4 = (android.graphics.drawable.Drawable$ConstantState) $r3;
+
+        if $r4 != null goto label1;
+
+        return null;
+
+     label1:
+        $r5 = virtualinvoke $r4.<android.graphics.drawable.Drawable$ConstantState: android.graphics.drawable.Drawable newDrawable()>();
+
+        return $r5;
+    }
+
+    private java.lang.CharSequence formatUrl(java.lang.CharSequence)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        java.lang.CharSequence $r1;
+        android.content.res.ColorStateList $r2;
+        int $i0;
+        android.util.TypedValue $r3;
+        android.text.SpannableString $r4;
+        android.content.res.Resources$Theme $r5;
+        android.content.Context $r6;
+        android.content.res.Resources $r7;
+        android.text.style.TextAppearanceSpan $r8;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: java.lang.CharSequence;
+
+        $r2 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.res.ColorStateList mUrlColor>;
+
+        if $r2 != null goto label1;
+
+        $r3 = new android.util.TypedValue;
+
+        specialinvoke $r3.<android.util.TypedValue: void <init>()>();
+
+        $r6 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mContext>;
+
+        $r5 = virtualinvoke $r6.<android.content.Context: android.content.res.Resources$Theme getTheme()>();
+
+        $i0 = <android.support.v7.appcompat.R$attr: int textColorSearchUrl>;
+
+        virtualinvoke $r5.<android.content.res.Resources$Theme: boolean resolveAttribute(int,android.util.TypedValue,boolean)>($i0, $r3, 1);
+
+        $r6 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mContext>;
+
+        $r7 = virtualinvoke $r6.<android.content.Context: android.content.res.Resources getResources()>();
+
+        $i0 = $r3.<android.util.TypedValue: int resourceId>;
+
+        $r2 = virtualinvoke $r7.<android.content.res.Resources: android.content.res.ColorStateList getColorStateList(int)>($i0);
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.res.ColorStateList mUrlColor> = $r2;
+
+     label1:
+        $r4 = new android.text.SpannableString;
+
+        specialinvoke $r4.<android.text.SpannableString: void <init>(java.lang.CharSequence)>($r1);
+
+        $r8 = new android.text.style.TextAppearanceSpan;
+
+        $r2 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.res.ColorStateList mUrlColor>;
+
+        specialinvoke $r8.<android.text.style.TextAppearanceSpan: void <init>(java.lang.String,int,int,android.content.res.ColorStateList,android.content.res.ColorStateList)>(null, 0, 0, $r2, null);
+
+        $i0 = interfaceinvoke $r1.<java.lang.CharSequence: int length()>();
+
+        virtualinvoke $r4.<android.text.SpannableString: void setSpan(java.lang.Object,int,int,int)>($r8, 0, $i0, 33);
+
+        return $r4;
+    }
+
+    private android.graphics.drawable.Drawable getActivityIcon(android.content.ComponentName)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.content.ComponentName $r1;
+        android.graphics.drawable.Drawable $r2, $r9;
+        android.content.pm.PackageManager$NameNotFoundException $r3;
+        android.content.Context $r4;
+        android.content.pm.PackageManager $r5;
+        android.content.pm.ActivityInfo $r6;
+        int $i0;
+        java.lang.String $r7;
+        android.content.pm.ApplicationInfo $r8;
+        java.lang.StringBuilder $r10;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.content.ComponentName;
+
+        $r4 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mContext>;
+
+        $r5 = virtualinvoke $r4.<android.content.Context: android.content.pm.PackageManager getPackageManager()>();
+
+     label1:
+        $r6 = virtualinvoke $r5.<android.content.pm.PackageManager: android.content.pm.ActivityInfo getActivityInfo(android.content.ComponentName,int)>($r1, 128);
+
+     label2:
+        $i0 = virtualinvoke $r6.<android.content.pm.ActivityInfo: int getIconResource()>();
+
+        if $i0 != 0 goto label5;
+
+        $r2 = null;
+
+     label3:
+        return $r2;
+
+     label4:
+        $r3 := @caughtexception;
+
+        $r7 = virtualinvoke $r3.<android.content.pm.PackageManager$NameNotFoundException: java.lang.String toString()>();
+
+        staticinvoke <android.util.Log: int w(java.lang.String,java.lang.String)>("SuggestionsAdapter", $r7);
+
+        return null;
+
+     label5:
+        $r7 = virtualinvoke $r1.<android.content.ComponentName: java.lang.String getPackageName()>();
+
+        $r8 = $r6.<android.content.pm.ActivityInfo: android.content.pm.ApplicationInfo applicationInfo>;
+
+        $r9 = virtualinvoke $r5.<android.content.pm.PackageManager: android.graphics.drawable.Drawable getDrawable(java.lang.String,int,android.content.pm.ApplicationInfo)>($r7, $i0, $r8);
+
+        $r2 = $r9;
+
+        if $r9 != null goto label3;
+
+        $r10 = new java.lang.StringBuilder;
+
+        specialinvoke $r10.<java.lang.StringBuilder: void <init>()>();
+
+        $r10 = virtualinvoke $r10.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("Invalid icon resource ");
+
+        $r10 = virtualinvoke $r10.<java.lang.StringBuilder: java.lang.StringBuilder append(int)>($i0);
+
+        $r10 = virtualinvoke $r10.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>(" for ");
+
+        $r7 = virtualinvoke $r1.<android.content.ComponentName: java.lang.String flattenToShortString()>();
+
+        $r10 = virtualinvoke $r10.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>($r7);
+
+        $r7 = virtualinvoke $r10.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        staticinvoke <android.util.Log: int w(java.lang.String,java.lang.String)>("SuggestionsAdapter", $r7);
+
+        return null;
+
+        catch android.content.pm.PackageManager$NameNotFoundException from label1 to label2 with label4;
+    }
+
+    private android.graphics.drawable.Drawable getActivityIconWithCache(android.content.ComponentName)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.content.ComponentName $r1;
+        android.graphics.drawable.Drawable$ConstantState $r2;
+        java.util.WeakHashMap $r3;
+        java.lang.String $r4;
+        boolean $z0;
+        java.lang.Object $r5;
+        android.content.Context $r6;
+        android.content.res.Resources $r7;
+        android.graphics.drawable.Drawable $r8;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.content.ComponentName;
+
+        $r4 = virtualinvoke $r1.<android.content.ComponentName: java.lang.String flattenToShortString()>();
+
+        $r3 = $r0.<android.support.v7.widget.SuggestionsAdapter: java.util.WeakHashMap mOutsideDrawablesCache>;
+
+        $z0 = virtualinvoke $r3.<java.util.WeakHashMap: boolean containsKey(java.lang.Object)>($r4);
+
+        if $z0 == 0 goto label2;
+
+        $r3 = $r0.<android.support.v7.widget.SuggestionsAdapter: java.util.WeakHashMap mOutsideDrawablesCache>;
+
+        $r5 = virtualinvoke $r3.<java.util.WeakHashMap: java.lang.Object get(java.lang.Object)>($r4);
+
+        $r2 = (android.graphics.drawable.Drawable$ConstantState) $r5;
+
+        if $r2 != null goto label1;
+
+        return null;
+
+     label1:
+        $r6 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mProviderContext>;
+
+        $r7 = virtualinvoke $r6.<android.content.Context: android.content.res.Resources getResources()>();
+
+        $r8 = virtualinvoke $r2.<android.graphics.drawable.Drawable$ConstantState: android.graphics.drawable.Drawable newDrawable(android.content.res.Resources)>($r7);
+
+        return $r8;
+
+     label2:
+        $r8 = specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.graphics.drawable.Drawable getActivityIcon(android.content.ComponentName)>($r1);
+
+        if $r8 != null goto label4;
+
+        $r2 = null;
+
+     label3:
+        $r3 = $r0.<android.support.v7.widget.SuggestionsAdapter: java.util.WeakHashMap mOutsideDrawablesCache>;
+
+        virtualinvoke $r3.<java.util.WeakHashMap: java.lang.Object put(java.lang.Object,java.lang.Object)>($r4, $r2);
+
+        return $r8;
+
+     label4:
+        $r2 = virtualinvoke $r8.<android.graphics.drawable.Drawable: android.graphics.drawable.Drawable$ConstantState getConstantState()>();
+
+        goto label3;
+    }
+
+    public static java.lang.String getColumnString(android.database.Cursor, java.lang.String)
+    {
+        android.database.Cursor $r0;
+        java.lang.String $r1;
+        int $i0;
+
+        $r0 := @parameter0: android.database.Cursor;
+
+        $r1 := @parameter1: java.lang.String;
+
+        $i0 = interfaceinvoke $r0.<android.database.Cursor: int getColumnIndex(java.lang.String)>($r1);
+
+        $r1 = staticinvoke <android.support.v7.widget.SuggestionsAdapter: java.lang.String getStringOrNull(android.database.Cursor,int)>($r0, $i0);
+
+        return $r1;
+    }
+
+    private android.graphics.drawable.Drawable getDefaultIcon1(android.database.Cursor)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.database.Cursor $r1;
+        android.app.SearchableInfo $r2;
+        android.content.ComponentName $r3;
+        android.graphics.drawable.Drawable $r4;
+        android.content.Context $r5;
+        android.content.pm.PackageManager $r6;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.database.Cursor;
+
+        $r2 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.app.SearchableInfo mSearchable>;
+
+        $r3 = virtualinvoke $r2.<android.app.SearchableInfo: android.content.ComponentName getSearchActivity()>();
+
+        $r4 = specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.graphics.drawable.Drawable getActivityIconWithCache(android.content.ComponentName)>($r3);
+
+        if $r4 == null goto label1;
+
+        return $r4;
+
+     label1:
+        $r5 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mContext>;
+
+        $r6 = virtualinvoke $r5.<android.content.Context: android.content.pm.PackageManager getPackageManager()>();
+
+        $r4 = virtualinvoke $r6.<android.content.pm.PackageManager: android.graphics.drawable.Drawable getDefaultActivityIcon()>();
+
+        return $r4;
+    }
+
+    private android.graphics.drawable.Drawable getDrawable(android.net.Uri)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.net.Uri $r1;
+        android.content.res.Resources$NotFoundException $r2;
+        java.io.FileNotFoundException $r3;
+        java.lang.String $r4, $r6;
+        java.lang.StringBuilder $r5;
+        boolean $z0;
+        android.graphics.drawable.Drawable $r7;
+        android.content.Context $r8;
+        android.content.ContentResolver $r9;
+        java.io.InputStream $r10;
+        java.io.IOException $r11, $r13;
+        java.lang.Throwable $r12;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.net.Uri;
+
+     label01:
+        $r6 = virtualinvoke $r1.<android.net.Uri: java.lang.String getScheme()>();
+
+        $r4 = "android.resource";
+
+        $z0 = virtualinvoke $r4.<java.lang.String: boolean equals(java.lang.Object)>($r6);
+
+     label02:
+        if $z0 == 0 goto label08;
+
+     label03:
+        $r7 = virtualinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.graphics.drawable.Drawable getDrawableFromResourceUri(android.net.Uri)>($r1);
+
+     label04:
+        return $r7;
+
+     label05:
+        $r2 := @caughtexception;
+
+        $r3 = new java.io.FileNotFoundException;
+
+        $r5 = new java.lang.StringBuilder;
+
+     label06:
+        specialinvoke $r5.<java.lang.StringBuilder: void <init>()>();
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("Resource does not exist: ");
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>($r1);
+
+        $r6 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        specialinvoke $r3.<java.io.FileNotFoundException: void <init>(java.lang.String)>($r6);
+
+        throw $r3;
+
+     label07:
+        $r3 := @caughtexception;
+
+        $r5 = new java.lang.StringBuilder;
+
+        specialinvoke $r5.<java.lang.StringBuilder: void <init>()>();
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("Icon not found: ");
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>($r1);
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>(", ");
+
+        $r6 = virtualinvoke $r3.<java.io.FileNotFoundException: java.lang.String getMessage()>();
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>($r6);
+
+        $r6 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        staticinvoke <android.util.Log: int w(java.lang.String,java.lang.String)>("SuggestionsAdapter", $r6);
+
+        return null;
+
+     label08:
+        $r8 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mProviderContext>;
+
+     label09:
+        $r9 = virtualinvoke $r8.<android.content.Context: android.content.ContentResolver getContentResolver()>();
+
+        $r10 = virtualinvoke $r9.<android.content.ContentResolver: java.io.InputStream openInputStream(android.net.Uri)>($r1);
+
+        if $r10 != null goto label10;
+
+        $r3 = new java.io.FileNotFoundException;
+
+        $r5 = new java.lang.StringBuilder;
+
+        specialinvoke $r5.<java.lang.StringBuilder: void <init>()>();
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("Failed to open ");
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>($r1);
+
+        $r6 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        specialinvoke $r3.<java.io.FileNotFoundException: void <init>(java.lang.String)>($r6);
+
+        throw $r3;
+
+     label10:
+        $r7 = staticinvoke <android.graphics.drawable.Drawable: android.graphics.drawable.Drawable createFromStream(java.io.InputStream,java.lang.String)>($r10, null);
+
+     label11:
+        virtualinvoke $r10.<java.io.InputStream: void close()>();
+
+     label12:
+        return $r7;
+
+     label13:
+        $r11 := @caughtexception;
+
+        $r5 = new java.lang.StringBuilder;
+
+     label14:
+        specialinvoke $r5.<java.lang.StringBuilder: void <init>()>();
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("Error closing icon stream for ");
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>($r1);
+
+        $r6 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        staticinvoke <android.util.Log: int e(java.lang.String,java.lang.String,java.lang.Throwable)>("SuggestionsAdapter", $r6, $r11);
+
+     label15:
+        return $r7;
+
+     label16:
+        $r12 := @caughtexception;
+
+     label17:
+        virtualinvoke $r10.<java.io.InputStream: void close()>();
+
+     label18:
+        throw $r12;
+
+     label19:
+        $r13 := @caughtexception;
+
+        $r5 = new java.lang.StringBuilder;
+
+        specialinvoke $r5.<java.lang.StringBuilder: void <init>()>();
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("Error closing icon stream for ");
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>($r1);
+
+        $r6 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        staticinvoke <android.util.Log: int e(java.lang.String,java.lang.String,java.lang.Throwable)>("SuggestionsAdapter", $r6, $r13);
+
+     label20:
+        goto label18;
+
+        catch java.io.FileNotFoundException from label01 to label02 with label07;
+        catch android.content.res.Resources$NotFoundException from label03 to label04 with label05;
+        catch java.io.FileNotFoundException from label03 to label04 with label07;
+        catch java.io.FileNotFoundException from label06 to label07 with label07;
+        catch java.io.FileNotFoundException from label09 to label10 with label07;
+        catch java.lang.Throwable from label10 to label11 with label16;
+        catch java.io.IOException from label11 to label12 with label13;
+        catch java.io.FileNotFoundException from label14 to label15 with label07;
+        catch java.io.IOException from label17 to label18 with label19;
+        catch java.io.FileNotFoundException from label18 to label20 with label07;
+    }
+
+    private android.graphics.drawable.Drawable getDrawableFromResourceValue(java.lang.String)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        java.lang.String $r1, $r4;
+        android.graphics.drawable.Drawable $r2, $r7;
+        java.lang.NumberFormatException $r3;
+        int $i0;
+        boolean $z0;
+        java.lang.StringBuilder $r5;
+        android.content.Context $r6;
+        android.content.res.Resources $r8;
+        android.net.Uri $r9;
+        android.content.res.Resources$NotFoundException $r10;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: java.lang.String;
+
+        if $r1 == null goto label1;
+
+        $i0 = virtualinvoke $r1.<java.lang.String: int length()>();
+
+        if $i0 == 0 goto label1;
+
+        $r4 = "0";
+
+        $z0 = virtualinvoke $r4.<java.lang.String: boolean equals(java.lang.Object)>($r1);
+
+        if $z0 == 0 goto label3;
+
+     label1:
+        $r2 = null;
+
+     label2:
+        return $r2;
+
+     label3:
+        $i0 = staticinvoke <java.lang.Integer: int parseInt(java.lang.String)>($r1);
+
+        $r5 = new java.lang.StringBuilder;
+
+        specialinvoke $r5.<java.lang.StringBuilder: void <init>()>();
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("android.resource://");
+
+        $r6 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mProviderContext>;
+
+        $r4 = virtualinvoke $r6.<android.content.Context: java.lang.String getPackageName()>();
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>($r4);
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("/");
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(int)>($i0);
+
+        $r4 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        $r7 = specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.graphics.drawable.Drawable checkIconCache(java.lang.String)>($r4);
+
+        $r2 = $r7;
+
+        if $r7 != null goto label2;
+
+        $r6 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mProviderContext>;
+
+        $r8 = virtualinvoke $r6.<android.content.Context: android.content.res.Resources getResources()>();
+
+        $r7 = virtualinvoke $r8.<android.content.res.Resources: android.graphics.drawable.Drawable getDrawable(int)>($i0);
+
+        specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: void storeInIconCache(java.lang.String,android.graphics.drawable.Drawable)>($r4, $r7);
+
+     label4:
+        return $r7;
+
+     label5:
+        $r3 := @caughtexception;
+
+        $r7 = specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.graphics.drawable.Drawable checkIconCache(java.lang.String)>($r1);
+
+        $r2 = $r7;
+
+        if $r7 != null goto label2;
+
+        $r9 = staticinvoke <android.net.Uri: android.net.Uri parse(java.lang.String)>($r1);
+
+        $r7 = specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.graphics.drawable.Drawable getDrawable(android.net.Uri)>($r9);
+
+        specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: void storeInIconCache(java.lang.String,android.graphics.drawable.Drawable)>($r1, $r7);
+
+        return $r7;
+
+     label6:
+        $r10 := @caughtexception;
+
+        $r5 = new java.lang.StringBuilder;
+
+        specialinvoke $r5.<java.lang.StringBuilder: void <init>()>();
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("Icon resource not found: ");
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>($r1);
+
+        $r4 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        staticinvoke <android.util.Log: int w(java.lang.String,java.lang.String)>("SuggestionsAdapter", $r4);
+
+        return null;
+
+        catch java.lang.NumberFormatException from label3 to label4 with label5;
+        catch android.content.res.Resources$NotFoundException from label3 to label4 with label6;
+    }
+
+    private android.graphics.drawable.Drawable getIcon1(android.database.Cursor)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.database.Cursor $r1;
+        android.graphics.drawable.Drawable $r2, $r4;
+        int $i0;
+        java.lang.String $r3;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.database.Cursor;
+
+        $i0 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mIconName1Col>;
+
+        if $i0 != -1 goto label2;
+
+        $r2 = null;
+
+     label1:
+        return $r2;
+
+     label2:
+        $i0 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mIconName1Col>;
+
+        $r3 = interfaceinvoke $r1.<android.database.Cursor: java.lang.String getString(int)>($i0);
+
+        $r4 = specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.graphics.drawable.Drawable getDrawableFromResourceValue(java.lang.String)>($r3);
+
+        $r2 = $r4;
+
+        if $r4 != null goto label1;
+
+        $r4 = specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.graphics.drawable.Drawable getDefaultIcon1(android.database.Cursor)>($r1);
+
+        return $r4;
+    }
+
+    private android.graphics.drawable.Drawable getIcon2(android.database.Cursor)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.database.Cursor $r1;
+        int $i0;
+        java.lang.String $r2;
+        android.graphics.drawable.Drawable $r3;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.database.Cursor;
+
+        $i0 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mIconName2Col>;
+
+        if $i0 != -1 goto label1;
+
+        return null;
+
+     label1:
+        $i0 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mIconName2Col>;
+
+        $r2 = interfaceinvoke $r1.<android.database.Cursor: java.lang.String getString(int)>($i0);
+
+        $r3 = specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.graphics.drawable.Drawable getDrawableFromResourceValue(java.lang.String)>($r2);
+
+        return $r3;
+    }
+
+    private static java.lang.String getStringOrNull(android.database.Cursor, int)
+    {
+        android.database.Cursor $r0;
+        int $i0;
+        java.lang.Exception $r1;
+        java.lang.String $r2;
+
+        $r0 := @parameter0: android.database.Cursor;
+
+        $i0 := @parameter1: int;
+
+        if $i0 != -1 goto label1;
+
+        return null;
+
+     label1:
+        $r2 = interfaceinvoke $r0.<android.database.Cursor: java.lang.String getString(int)>($i0);
+
+     label2:
+        return $r2;
+
+     label3:
+        $r1 := @caughtexception;
+
+        staticinvoke <android.util.Log: int e(java.lang.String,java.lang.String,java.lang.Throwable)>("SuggestionsAdapter", "unexpected error retrieving valid column from cursor, did the remote process die?", $r1);
+
+        return null;
+
+        catch java.lang.Exception from label1 to label2 with label3;
+    }
+
+    private void setViewDrawable(android.widget.ImageView, android.graphics.drawable.Drawable, int)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.widget.ImageView $r1;
+        android.graphics.drawable.Drawable $r2;
+        int $i0;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.widget.ImageView;
+
+        $r2 := @parameter1: android.graphics.drawable.Drawable;
+
+        $i0 := @parameter2: int;
+
+        virtualinvoke $r1.<android.widget.ImageView: void setImageDrawable(android.graphics.drawable.Drawable)>($r2);
+
+        if $r2 != null goto label2;
+
+        virtualinvoke $r1.<android.widget.ImageView: void setVisibility(int)>($i0);
+
+     label1:
+        return;
+
+     label2:
+        virtualinvoke $r1.<android.widget.ImageView: void setVisibility(int)>(0);
+
+        virtualinvoke $r2.<android.graphics.drawable.Drawable: boolean setVisible(boolean,boolean)>(0, 0);
+
+        virtualinvoke $r2.<android.graphics.drawable.Drawable: boolean setVisible(boolean,boolean)>(1, 0);
+
+        goto label1;
+    }
+
+    private void setViewText(android.widget.TextView, java.lang.CharSequence)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.widget.TextView $r1;
+        java.lang.CharSequence $r2;
+        boolean $z0;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.widget.TextView;
+
+        $r2 := @parameter1: java.lang.CharSequence;
+
+        virtualinvoke $r1.<android.widget.TextView: void setText(java.lang.CharSequence)>($r2);
+
+        $z0 = staticinvoke <android.text.TextUtils: boolean isEmpty(java.lang.CharSequence)>($r2);
+
+        if $z0 == 0 goto label2;
+
+        virtualinvoke $r1.<android.widget.TextView: void setVisibility(int)>(8);
+
+     label1:
+        return;
+
+     label2:
+        virtualinvoke $r1.<android.widget.TextView: void setVisibility(int)>(0);
+
+        goto label1;
+    }
+
+    private void storeInIconCache(java.lang.String, android.graphics.drawable.Drawable)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        java.lang.String $r1;
+        android.graphics.drawable.Drawable $r2;
+        java.util.WeakHashMap $r3;
+        android.graphics.drawable.Drawable$ConstantState $r4;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: java.lang.String;
+
+        $r2 := @parameter1: android.graphics.drawable.Drawable;
+
+        if $r2 == null goto label1;
+
+        $r3 = $r0.<android.support.v7.widget.SuggestionsAdapter: java.util.WeakHashMap mOutsideDrawablesCache>;
+
+        $r4 = virtualinvoke $r2.<android.graphics.drawable.Drawable: android.graphics.drawable.Drawable$ConstantState getConstantState()>();
+
+        virtualinvoke $r3.<java.util.WeakHashMap: java.lang.Object put(java.lang.Object,java.lang.Object)>($r1, $r4);
+
+     label1:
+        return;
+    }
+
+    private void updateSpinnerState(android.database.Cursor)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.database.Cursor $r1;
+        android.os.Bundle $r2;
+        boolean $z0;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.database.Cursor;
+
+        if $r1 == null goto label3;
+
+        $r2 = interfaceinvoke $r1.<android.database.Cursor: android.os.Bundle getExtras()>();
+
+     label1:
+        if $r2 == null goto label2;
+
+        $z0 = virtualinvoke $r2.<android.os.Bundle: boolean getBoolean(java.lang.String)>("in_progress");
+
+        if $z0 == 0 goto label2;
+
+     label2:
+        return;
+
+     label3:
+        $r2 = null;
+
+        goto label1;
+    }
+
+    public void bindView(android.view.View, android.content.Context, android.database.Cursor)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.view.View $r1;
+        android.content.Context $r2;
+        android.database.Cursor $r3;
+        int $i0, $i1;
+        java.lang.Object $r4;
+        android.support.v7.widget.SuggestionsAdapter$ChildViewCache $r5;
+        android.widget.TextView $r6;
+        java.lang.String $r7;
+        java.lang.CharSequence $r8;
+        boolean $z0;
+        android.widget.ImageView $r9;
+        android.graphics.drawable.Drawable $r10;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.view.View;
+
+        $r2 := @parameter1: android.content.Context;
+
+        $r3 := @parameter2: android.database.Cursor;
+
+        $r4 = virtualinvoke $r1.<android.view.View: java.lang.Object getTag()>();
+
+        $r5 = (android.support.v7.widget.SuggestionsAdapter$ChildViewCache) $r4;
+
+        $i0 = 0;
+
+        $i1 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mFlagsCol>;
+
+        if $i1 == -1 goto label01;
+
+        $i1 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mFlagsCol>;
+
+        $i0 = interfaceinvoke $r3.<android.database.Cursor: int getInt(int)>($i1);
+
+     label01:
+        $r6 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText1>;
+
+        if $r6 == null goto label02;
+
+        $i1 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mText1Col>;
+
+        $r7 = staticinvoke <android.support.v7.widget.SuggestionsAdapter: java.lang.String getStringOrNull(android.database.Cursor,int)>($r3, $i1);
+
+        $r6 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText1>;
+
+        specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: void setViewText(android.widget.TextView,java.lang.CharSequence)>($r6, $r7);
+
+     label02:
+        $r6 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText2>;
+
+        if $r6 == null goto label05;
+
+        $i1 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mText2UrlCol>;
+
+        $r7 = staticinvoke <android.support.v7.widget.SuggestionsAdapter: java.lang.String getStringOrNull(android.database.Cursor,int)>($r3, $i1);
+
+        if $r7 == null goto label10;
+
+        $r8 = specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: java.lang.CharSequence formatUrl(java.lang.CharSequence)>($r7);
+
+     label03:
+        $z0 = staticinvoke <android.text.TextUtils: boolean isEmpty(java.lang.CharSequence)>($r8);
+
+        if $z0 == 0 goto label11;
+
+        $r6 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText1>;
+
+        if $r6 == null goto label04;
+
+        $r6 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText1>;
+
+        virtualinvoke $r6.<android.widget.TextView: void setSingleLine(boolean)>(0);
+
+        $r6 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText1>;
+
+        virtualinvoke $r6.<android.widget.TextView: void setMaxLines(int)>(2);
+
+     label04:
+        $r6 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText2>;
+
+        specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: void setViewText(android.widget.TextView,java.lang.CharSequence)>($r6, $r8);
+
+     label05:
+        $r9 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.ImageView mIcon1>;
+
+        if $r9 == null goto label06;
+
+        $r9 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.ImageView mIcon1>;
+
+        $r10 = specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.graphics.drawable.Drawable getIcon1(android.database.Cursor)>($r3);
+
+        specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: void setViewDrawable(android.widget.ImageView,android.graphics.drawable.Drawable,int)>($r9, $r10, 4);
+
+     label06:
+        $r9 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.ImageView mIcon2>;
+
+        if $r9 == null goto label07;
+
+        $r9 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.ImageView mIcon2>;
+
+        $r10 = specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.graphics.drawable.Drawable getIcon2(android.database.Cursor)>($r3);
+
+        specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: void setViewDrawable(android.widget.ImageView,android.graphics.drawable.Drawable,int)>($r9, $r10, 8);
+
+     label07:
+        $i1 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mQueryRefinement>;
+
+        if $i1 == 2 goto label08;
+
+        $i1 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mQueryRefinement>;
+
+        if $i1 != 1 goto label12;
+
+        $i1 = $i0 & 1;
+
+        if $i1 == 0 goto label12;
+
+     label08:
+        $r9 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.ImageView mIconRefine>;
+
+        virtualinvoke $r9.<android.widget.ImageView: void setVisibility(int)>(0);
+
+        $r9 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.ImageView mIconRefine>;
+
+        $r6 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText1>;
+
+        $r8 = virtualinvoke $r6.<android.widget.TextView: java.lang.CharSequence getText()>();
+
+        virtualinvoke $r9.<android.widget.ImageView: void setTag(java.lang.Object)>($r8);
+
+        $r9 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.ImageView mIconRefine>;
+
+        virtualinvoke $r9.<android.widget.ImageView: void setOnClickListener(android.view.View$OnClickListener)>($r0);
+
+     label09:
+        return;
+
+     label10:
+        $i1 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mText2Col>;
+
+        $r8 = staticinvoke <android.support.v7.widget.SuggestionsAdapter: java.lang.String getStringOrNull(android.database.Cursor,int)>($r3, $i1);
+
+        goto label03;
+
+     label11:
+        $r6 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText1>;
+
+        if $r6 == null goto label04;
+
+        $r6 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText1>;
+
+        virtualinvoke $r6.<android.widget.TextView: void setSingleLine(boolean)>(1);
+
+        $r6 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText1>;
+
+        virtualinvoke $r6.<android.widget.TextView: void setMaxLines(int)>(1);
+
+        goto label04;
+
+     label12:
+        $r9 = $r5.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.ImageView mIconRefine>;
+
+        virtualinvoke $r9.<android.widget.ImageView: void setVisibility(int)>(8);
+
+        goto label09;
+    }
+
+    public void changeCursor(android.database.Cursor)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.database.Cursor $r1;
+        java.lang.Exception $r2;
+        boolean $z0;
+        int $i0;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.database.Cursor;
+
+        $z0 = $r0.<android.support.v7.widget.SuggestionsAdapter: boolean mClosed>;
+
+        if $z0 == 0 goto label2;
+
+        staticinvoke <android.util.Log: int w(java.lang.String,java.lang.String)>("SuggestionsAdapter", "Tried to change cursor after adapter was closed.");
+
+        if $r1 == null goto label1;
+
+        interfaceinvoke $r1.<android.database.Cursor: void close()>();
+
+     label1:
+        return;
+
+     label2:
+        specialinvoke $r0.<android.support.v4.widget.ResourceCursorAdapter: void changeCursor(android.database.Cursor)>($r1);
+
+        if $r1 == null goto label1;
+
+        $i0 = interfaceinvoke $r1.<android.database.Cursor: int getColumnIndex(java.lang.String)>("suggest_text_1");
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mText1Col> = $i0;
+
+        $i0 = interfaceinvoke $r1.<android.database.Cursor: int getColumnIndex(java.lang.String)>("suggest_text_2");
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mText2Col> = $i0;
+
+        $i0 = interfaceinvoke $r1.<android.database.Cursor: int getColumnIndex(java.lang.String)>("suggest_text_2_url");
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mText2UrlCol> = $i0;
+
+        $i0 = interfaceinvoke $r1.<android.database.Cursor: int getColumnIndex(java.lang.String)>("suggest_icon_1");
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mIconName1Col> = $i0;
+
+        $i0 = interfaceinvoke $r1.<android.database.Cursor: int getColumnIndex(java.lang.String)>("suggest_icon_2");
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mIconName2Col> = $i0;
+
+        $i0 = interfaceinvoke $r1.<android.database.Cursor: int getColumnIndex(java.lang.String)>("suggest_flags");
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mFlagsCol> = $i0;
+
+     label3:
+        goto label1;
+
+     label4:
+        $r2 := @caughtexception;
+
+        staticinvoke <android.util.Log: int e(java.lang.String,java.lang.String,java.lang.Throwable)>("SuggestionsAdapter", "error changing cursor and caching columns", $r2);
+
+        goto label1;
+
+        catch java.lang.Exception from label2 to label3 with label4;
+    }
+
+    public void close()
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        virtualinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: void changeCursor(android.database.Cursor)>(null);
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: boolean mClosed> = 1;
+
+        return;
+    }
+
+    public java.lang.CharSequence convertToString(android.database.Cursor)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.database.Cursor $r1;
+        java.lang.String $r2, $r3;
+        android.app.SearchableInfo $r4;
+        boolean $z0;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.database.Cursor;
+
+        if $r1 != null goto label2;
+
+        $r2 = null;
+
+     label1:
+        return $r2;
+
+     label2:
+        $r3 = staticinvoke <android.support.v7.widget.SuggestionsAdapter: java.lang.String getColumnString(android.database.Cursor,java.lang.String)>($r1, "suggest_intent_query");
+
+        $r2 = $r3;
+
+        if $r3 != null goto label1;
+
+        $r4 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.app.SearchableInfo mSearchable>;
+
+        $z0 = virtualinvoke $r4.<android.app.SearchableInfo: boolean shouldRewriteQueryFromData()>();
+
+        if $z0 == 0 goto label3;
+
+        $r3 = staticinvoke <android.support.v7.widget.SuggestionsAdapter: java.lang.String getColumnString(android.database.Cursor,java.lang.String)>($r1, "suggest_intent_data");
+
+        if $r3 == null goto label3;
+
+        return $r3;
+
+     label3:
+        $r4 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.app.SearchableInfo mSearchable>;
+
+        $z0 = virtualinvoke $r4.<android.app.SearchableInfo: boolean shouldRewriteQueryFromText()>();
+
+        if $z0 == 0 goto label4;
+
+        $r3 = staticinvoke <android.support.v7.widget.SuggestionsAdapter: java.lang.String getColumnString(android.database.Cursor,java.lang.String)>($r1, "suggest_text_1");
+
+        if $r3 == null goto label4;
+
+        return $r3;
+
+     label4:
+        return null;
+    }
+
+    android.graphics.drawable.Drawable getDrawableFromResourceUri(android.net.Uri) throws java.io.FileNotFoundException
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.net.Uri $r1;
+        java.lang.NumberFormatException $r2;
+        android.content.pm.PackageManager$NameNotFoundException $r3;
+        int $i0;
+        java.lang.String $r4, $r12, $r13;
+        boolean $z0;
+        java.io.FileNotFoundException $r5;
+        java.lang.StringBuilder $r6;
+        android.content.Context $r7;
+        android.content.pm.PackageManager $r8;
+        android.content.res.Resources $r9;
+        java.util.List $r10;
+        java.lang.Object $r11;
+        android.graphics.drawable.Drawable $r14;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.net.Uri;
+
+        $r4 = virtualinvoke $r1.<android.net.Uri: java.lang.String getAuthority()>();
+
+        $z0 = staticinvoke <android.text.TextUtils: boolean isEmpty(java.lang.CharSequence)>($r4);
+
+        if $z0 == 0 goto label01;
+
+        $r5 = new java.io.FileNotFoundException;
+
+        $r6 = new java.lang.StringBuilder;
+
+        specialinvoke $r6.<java.lang.StringBuilder: void <init>()>();
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("No authority: ");
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>($r1);
+
+        $r4 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        specialinvoke $r5.<java.io.FileNotFoundException: void <init>(java.lang.String)>($r4);
+
+        throw $r5;
+
+     label01:
+        $r7 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mContext>;
+
+     label02:
+        $r8 = virtualinvoke $r7.<android.content.Context: android.content.pm.PackageManager getPackageManager()>();
+
+        $r9 = virtualinvoke $r8.<android.content.pm.PackageManager: android.content.res.Resources getResourcesForApplication(java.lang.String)>($r4);
+
+     label03:
+        $r10 = virtualinvoke $r1.<android.net.Uri: java.util.List getPathSegments()>();
+
+        if $r10 != null goto label05;
+
+        $r5 = new java.io.FileNotFoundException;
+
+        $r6 = new java.lang.StringBuilder;
+
+        specialinvoke $r6.<java.lang.StringBuilder: void <init>()>();
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("No path: ");
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>($r1);
+
+        $r4 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        specialinvoke $r5.<java.io.FileNotFoundException: void <init>(java.lang.String)>($r4);
+
+        throw $r5;
+
+     label04:
+        $r3 := @caughtexception;
+
+        $r5 = new java.io.FileNotFoundException;
+
+        $r6 = new java.lang.StringBuilder;
+
+        specialinvoke $r6.<java.lang.StringBuilder: void <init>()>();
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("No package found for authority: ");
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>($r1);
+
+        $r4 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        specialinvoke $r5.<java.io.FileNotFoundException: void <init>(java.lang.String)>($r4);
+
+        throw $r5;
+
+     label05:
+        $i0 = interfaceinvoke $r10.<java.util.List: int size()>();
+
+        if $i0 != 1 goto label09;
+
+     label06:
+        $r11 = interfaceinvoke $r10.<java.util.List: java.lang.Object get(int)>(0);
+
+        $r4 = (java.lang.String) $r11;
+
+        $i0 = staticinvoke <java.lang.Integer: int parseInt(java.lang.String)>($r4);
+
+     label07:
+        if $i0 != 0 goto label11;
+
+        $r5 = new java.io.FileNotFoundException;
+
+        $r6 = new java.lang.StringBuilder;
+
+        specialinvoke $r6.<java.lang.StringBuilder: void <init>()>();
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("No resource found for: ");
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>($r1);
+
+        $r4 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        specialinvoke $r5.<java.io.FileNotFoundException: void <init>(java.lang.String)>($r4);
+
+        throw $r5;
+
+     label08:
+        $r2 := @caughtexception;
+
+        $r5 = new java.io.FileNotFoundException;
+
+        $r6 = new java.lang.StringBuilder;
+
+        specialinvoke $r6.<java.lang.StringBuilder: void <init>()>();
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("Single path segment is not a resource ID: ");
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>($r1);
+
+        $r4 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        specialinvoke $r5.<java.io.FileNotFoundException: void <init>(java.lang.String)>($r4);
+
+        throw $r5;
+
+     label09:
+        if $i0 != 2 goto label10;
+
+        $r11 = interfaceinvoke $r10.<java.util.List: java.lang.Object get(int)>(1);
+
+        $r12 = (java.lang.String) $r11;
+
+        $r11 = interfaceinvoke $r10.<java.util.List: java.lang.Object get(int)>(0);
+
+        $r13 = (java.lang.String) $r11;
+
+        $i0 = virtualinvoke $r9.<android.content.res.Resources: int getIdentifier(java.lang.String,java.lang.String,java.lang.String)>($r12, $r13, $r4);
+
+        goto label07;
+
+     label10:
+        $r5 = new java.io.FileNotFoundException;
+
+        $r6 = new java.lang.StringBuilder;
+
+        specialinvoke $r6.<java.lang.StringBuilder: void <init>()>();
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>("More than two path segments: ");
+
+        $r6 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.Object)>($r1);
+
+        $r13 = virtualinvoke $r6.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        specialinvoke $r5.<java.io.FileNotFoundException: void <init>(java.lang.String)>($r13);
+
+        throw $r5;
+
+     label11:
+        $r14 = virtualinvoke $r9.<android.content.res.Resources: android.graphics.drawable.Drawable getDrawable(int)>($i0);
+
+        return $r14;
+
+        catch android.content.pm.PackageManager$NameNotFoundException from label02 to label03 with label04;
+        catch java.lang.NumberFormatException from label06 to label07 with label08;
+    }
+
+    public int getQueryRefinement()
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        int $i0;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $i0 = $r0.<android.support.v7.widget.SuggestionsAdapter: int mQueryRefinement>;
+
+        return $i0;
+    }
+
+    android.database.Cursor getSearchManagerSuggestions(android.app.SearchableInfo, java.lang.String, int)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.app.SearchableInfo $r1;
+        java.lang.String $r2, $r5;
+        int $i0;
+        android.net.Uri$Builder $r3;
+        java.lang.String[] $r4;
+        android.net.Uri $r6;
+        android.content.Context $r7;
+        android.content.ContentResolver $r8;
+        android.database.Cursor $r9;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.app.SearchableInfo;
+
+        $r2 := @parameter1: java.lang.String;
+
+        $i0 := @parameter2: int;
+
+        if $r1 != null goto label2;
+
+     label1:
+        return null;
+
+     label2:
+        $r5 = virtualinvoke $r1.<android.app.SearchableInfo: java.lang.String getSuggestAuthority()>();
+
+        if $r5 == null goto label1;
+
+        $r3 = new android.net.Uri$Builder;
+
+        specialinvoke $r3.<android.net.Uri$Builder: void <init>()>();
+
+        $r3 = virtualinvoke $r3.<android.net.Uri$Builder: android.net.Uri$Builder scheme(java.lang.String)>("content");
+
+        $r3 = virtualinvoke $r3.<android.net.Uri$Builder: android.net.Uri$Builder authority(java.lang.String)>($r5);
+
+        $r3 = virtualinvoke $r3.<android.net.Uri$Builder: android.net.Uri$Builder query(java.lang.String)>("");
+
+        $r3 = virtualinvoke $r3.<android.net.Uri$Builder: android.net.Uri$Builder fragment(java.lang.String)>("");
+
+        $r5 = virtualinvoke $r1.<android.app.SearchableInfo: java.lang.String getSuggestPath()>();
+
+        if $r5 == null goto label3;
+
+        virtualinvoke $r3.<android.net.Uri$Builder: android.net.Uri$Builder appendEncodedPath(java.lang.String)>($r5);
+
+     label3:
+        virtualinvoke $r3.<android.net.Uri$Builder: android.net.Uri$Builder appendPath(java.lang.String)>("search_suggest_query");
+
+        $r5 = virtualinvoke $r1.<android.app.SearchableInfo: java.lang.String getSuggestSelection()>();
+
+        $r4 = null;
+
+        if $r5 == null goto label6;
+
+        $r4 = newarray (java.lang.String)[1];
+
+        $r4[0] = $r2;
+
+     label4:
+        if $i0 <= 0 goto label5;
+
+        $r2 = staticinvoke <java.lang.String: java.lang.String valueOf(int)>($i0);
+
+        virtualinvoke $r3.<android.net.Uri$Builder: android.net.Uri$Builder appendQueryParameter(java.lang.String,java.lang.String)>("limit", $r2);
+
+     label5:
+        $r6 = virtualinvoke $r3.<android.net.Uri$Builder: android.net.Uri build()>();
+
+        $r7 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mContext>;
+
+        $r8 = virtualinvoke $r7.<android.content.Context: android.content.ContentResolver getContentResolver()>();
+
+        $r9 = virtualinvoke $r8.<android.content.ContentResolver: android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String)>($r6, null, $r5, $r4, null);
+
+        return $r9;
+
+     label6:
+        virtualinvoke $r3.<android.net.Uri$Builder: android.net.Uri$Builder appendPath(java.lang.String)>($r2);
+
+        goto label4;
+    }
+
+    public android.view.View getView(int, android.view.View, android.view.ViewGroup)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        int $i0;
+        android.view.View $r1, $r7;
+        android.view.ViewGroup $r2;
+        java.lang.RuntimeException $r3;
+        android.widget.TextView $r4;
+        android.content.Context $r5;
+        android.database.Cursor $r6;
+        java.lang.Object $r8;
+        android.support.v7.widget.SuggestionsAdapter$ChildViewCache $r9;
+        java.lang.String $r10;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $i0 := @parameter0: int;
+
+        $r1 := @parameter1: android.view.View;
+
+        $r2 := @parameter2: android.view.ViewGroup;
+
+     label1:
+        $r1 = specialinvoke $r0.<android.support.v4.widget.ResourceCursorAdapter: android.view.View getView(int,android.view.View,android.view.ViewGroup)>($i0, $r1, $r2);
+
+     label2:
+        return $r1;
+
+     label3:
+        $r3 := @caughtexception;
+
+        staticinvoke <android.util.Log: int w(java.lang.String,java.lang.String,java.lang.Throwable)>("SuggestionsAdapter", "Search suggestions cursor threw exception.", $r3);
+
+        $r5 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.content.Context mContext>;
+
+        $r6 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.database.Cursor mCursor>;
+
+        $r7 = virtualinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.view.View newView(android.content.Context,android.database.Cursor,android.view.ViewGroup)>($r5, $r6, $r2);
+
+        $r1 = $r7;
+
+        if $r7 == null goto label2;
+
+        $r8 = virtualinvoke $r7.<android.view.View: java.lang.Object getTag()>();
+
+        $r9 = (android.support.v7.widget.SuggestionsAdapter$ChildViewCache) $r8;
+
+        $r4 = $r9.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: android.widget.TextView mText1>;
+
+        $r10 = virtualinvoke $r3.<java.lang.RuntimeException: java.lang.String toString()>();
+
+        virtualinvoke $r4.<android.widget.TextView: void setText(java.lang.CharSequence)>($r10);
+
+        return $r7;
+
+        catch java.lang.RuntimeException from label1 to label2 with label3;
+    }
+
+    public boolean hasStableIds()
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        return 0;
+    }
+
+    public android.view.View newView(android.content.Context, android.database.Cursor, android.view.ViewGroup)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.content.Context $r1;
+        android.database.Cursor $r2;
+        android.view.ViewGroup $r3;
+        android.support.v7.widget.SuggestionsAdapter$ChildViewCache $r4;
+        android.view.View $r5;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.content.Context;
+
+        $r2 := @parameter1: android.database.Cursor;
+
+        $r3 := @parameter2: android.view.ViewGroup;
+
+        $r5 = specialinvoke $r0.<android.support.v4.widget.ResourceCursorAdapter: android.view.View newView(android.content.Context,android.database.Cursor,android.view.ViewGroup)>($r1, $r2, $r3);
+
+        $r4 = new android.support.v7.widget.SuggestionsAdapter$ChildViewCache;
+
+        specialinvoke $r4.<android.support.v7.widget.SuggestionsAdapter$ChildViewCache: void <init>(android.view.View)>($r5);
+
+        virtualinvoke $r5.<android.view.View: void setTag(java.lang.Object)>($r4);
+
+        return $r5;
+    }
+
+    public void notifyDataSetChanged()
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.database.Cursor $r1;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        specialinvoke $r0.<android.support.v4.widget.ResourceCursorAdapter: void notifyDataSetChanged()>();
+
+        $r1 = virtualinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.database.Cursor getCursor()>();
+
+        specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: void updateSpinnerState(android.database.Cursor)>($r1);
+
+        return;
+    }
+
+    public void notifyDataSetInvalidated()
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.database.Cursor $r1;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        specialinvoke $r0.<android.support.v4.widget.ResourceCursorAdapter: void notifyDataSetInvalidated()>();
+
+        $r1 = virtualinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.database.Cursor getCursor()>();
+
+        specialinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: void updateSpinnerState(android.database.Cursor)>($r1);
+
+        return;
+    }
+
+    public void onClick(android.view.View)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        android.view.View $r1;
+        boolean $z0;
+        java.lang.Object $r2;
+        android.support.v7.widget.SearchView $r3;
+        java.lang.CharSequence $r4;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: android.view.View;
+
+        $r2 = virtualinvoke $r1.<android.view.View: java.lang.Object getTag()>();
+
+        $z0 = $r2 instanceof java.lang.CharSequence;
+
+        if $z0 == 0 goto label1;
+
+        $r3 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.support.v7.widget.SearchView mSearchView>;
+
+        $r4 = (java.lang.CharSequence) $r2;
+
+        virtualinvoke $r3.<android.support.v7.widget.SearchView: void onQueryRefine(java.lang.CharSequence)>($r4);
+
+     label1:
+        return;
+    }
+
+    public android.database.Cursor runQueryOnBackgroundThread(java.lang.CharSequence)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        java.lang.CharSequence $r1;
+        java.lang.RuntimeException $r2;
+        java.lang.String $r3;
+        android.support.v7.widget.SearchView $r4;
+        int $i0;
+        android.app.SearchableInfo $r5;
+        android.database.Cursor $r6;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $r1 := @parameter0: java.lang.CharSequence;
+
+        if $r1 != null goto label3;
+
+        $r3 = "";
+
+     label1:
+        $r4 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.support.v7.widget.SearchView mSearchView>;
+
+        $i0 = virtualinvoke $r4.<android.support.v7.widget.SearchView: int getVisibility()>();
+
+        if $i0 != 0 goto label2;
+
+        $r4 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.support.v7.widget.SearchView mSearchView>;
+
+        $i0 = virtualinvoke $r4.<android.support.v7.widget.SearchView: int getWindowVisibility()>();
+
+        if $i0 == 0 goto label4;
+
+     label2:
+        return null;
+
+     label3:
+        $r3 = virtualinvoke $r1.<java.lang.Object: java.lang.String toString()>();
+
+        goto label1;
+
+     label4:
+        $r5 = $r0.<android.support.v7.widget.SuggestionsAdapter: android.app.SearchableInfo mSearchable>;
+
+        $r6 = virtualinvoke $r0.<android.support.v7.widget.SuggestionsAdapter: android.database.Cursor getSearchManagerSuggestions(android.app.SearchableInfo,java.lang.String,int)>($r5, $r3, 50);
+
+        if $r6 == null goto label2;
+
+        interfaceinvoke $r6.<android.database.Cursor: int getCount()>();
+
+     label5:
+        return $r6;
+
+     label6:
+        $r2 := @caughtexception;
+
+        staticinvoke <android.util.Log: int w(java.lang.String,java.lang.String,java.lang.Throwable)>("SuggestionsAdapter", "Search suggestions query threw an exception.", $r2);
+
+        return null;
+
+        catch java.lang.RuntimeException from label4 to label5 with label6;
+    }
+
+    public void setQueryRefinement(int)
+    {
+        android.support.v7.widget.SuggestionsAdapter $r0;
+        int $i0;
+
+        $r0 := @this: android.support.v7.widget.SuggestionsAdapter;
+
+        $i0 := @parameter0: int;
+
+        $r0.<android.support.v7.widget.SuggestionsAdapter: int mQueryRefinement> = $i0;
+
+        return;
+    }
+
+    public static void <clinit>()
+    {
+        <android.support.v7.widget.SuggestionsAdapter: int REFINE_BY_ENTRY> = 1;
+
+        <android.support.v7.widget.SuggestionsAdapter: int REFINE_ALL> = 2;
+
+        <android.support.v7.widget.SuggestionsAdapter: int QUERY_LIMIT> = 50;
+
+        <android.support.v7.widget.SuggestionsAdapter: java.lang.String LOG_TAG> = "SuggestionsAdapter";
+
+        <android.support.v7.widget.SuggestionsAdapter: int INVALID_INDEX> = -1;
+
+        <android.support.v7.widget.SuggestionsAdapter: boolean DBG> = 0;
+
+        return;
+    }
+}

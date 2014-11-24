@@ -1,5 +1,0 @@
-public interface  util.objectpool.PoolObjectFactory extends java.lang.Object
-{
-
-    public abstract util.objectpool.PoolObject createPoolObject();
-}

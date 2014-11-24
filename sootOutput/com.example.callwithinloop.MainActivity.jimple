@@ -1,0 +1,179 @@
+public class com.example.callwithinloop.MainActivity extends android.app.Activity implements android.view.View$OnClickListener
+{
+    private android.widget.Button testExceedPoolBtn;
+    private android.widget.TextView testExceedPoolText;
+    public static util.objectpool.BufferPool buffPool;
+
+    public void <init>()
+    {
+        com.example.callwithinloop.MainActivity $r0;
+
+        $r0 := @this: com.example.callwithinloop.MainActivity;
+
+        specialinvoke $r0.<android.app.Activity: void <init>()>();
+
+        return;
+    }
+
+    private void testPool(int, android.widget.TextView)
+    {
+        com.example.callwithinloop.MainActivity $r0;
+        int $i0, $i1;
+        android.widget.TextView $r1;
+        com.example.callwithinloop.PointPoolObject $r2;
+        com.example.callwithinloop.PointPoolObject[] $r3;
+        com.example.callwithinloop.classB $r4;
+        java.lang.StringBuilder $r5;
+        java.lang.String $r6, com.example.callwithinloop.PointPoolObject_cls;
+        util.objectpool.BufferPool bufPool;
+        boolean $r2_flag;
+        java.lang.Object $r2_savedObj;
+
+        $r0 := @this: com.example.callwithinloop.MainActivity;
+
+        $i0 := @parameter0: int;
+
+        $r1 := @parameter1: android.widget.TextView;
+
+        bufPool = <com.example.callwithinloop.MainActivity: util.objectpool.BufferPool buffPool>;
+
+        com.example.callwithinloop.PointPoolObject_cls = "com.example.callwithinloop.PointPoolObject";
+
+        $r3 = newarray (com.example.callwithinloop.PointPoolObject)[$i0];
+
+        staticinvoke <android.os.Debug: void startAllocCounting()>();
+
+        $i1 = 0;
+
+     label1:
+        if $i1 < $i0 goto label3;
+
+        $i1 = 0;
+
+     label2:
+        if $i1 < $i0 goto label6;
+
+        $r4 = new com.example.callwithinloop.classB;
+
+        specialinvoke $r4.<com.example.callwithinloop.classB: void <init>()>();
+
+        virtualinvoke $r4.<com.example.callwithinloop.classB: void useObjects(int)>($i0);
+
+        staticinvoke <android.os.Debug: void stopAllocCounting()>();
+
+        $i1 = staticinvoke <android.os.Debug: int getThreadAllocCount()>();
+
+        $r5 = new java.lang.StringBuilder;
+
+        $r6 = staticinvoke <java.lang.String: java.lang.String valueOf(int)>($i1);
+
+        specialinvoke $r5.<java.lang.StringBuilder: void <init>(java.lang.String)>($r6);
+
+        $r5 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)>(" ac");
+
+        $r6 = virtualinvoke $r5.<java.lang.StringBuilder: java.lang.String toString()>();
+
+        virtualinvoke $r1.<android.widget.TextView: void setText(java.lang.CharSequence)>($r6);
+
+        return;
+
+     label3:
+        $r2_flag = virtualinvoke bufPool.<util.objectpool.BufferPool: boolean isObjInPool(java.lang.String)>(com.example.callwithinloop.PointPoolObject_cls);
+
+        if $r2_flag == 0 goto label4;
+
+        $r2_savedObj = virtualinvoke bufPool.<util.objectpool.BufferPool: java.lang.Object getObject(java.lang.String)>(com.example.callwithinloop.PointPoolObject_cls);
+
+        $r2 = (com.example.callwithinloop.PointPoolObject) $r2_savedObj;
+
+        virtualinvoke $r2.<com.example.callwithinloop.PointPoolObject: void initializePoolObject()>();
+
+        goto label5;
+
+     label4:
+        $r2 = new com.example.callwithinloop.PointPoolObject;
+
+        specialinvoke $r2.<com.example.callwithinloop.PointPoolObject: void <init>()>();
+
+     label5:
+        $r3[$i1] = $r2;
+
+        $i1 = $i1 + 1;
+
+        goto label1;
+
+     label6:
+        $r2 = $r3[$i1];
+
+        $i1 = $i1 + 1;
+		
+		virtualinvoke bufPool.<util.objectpool.BufferPool: void saveObject(java.lang.String,java.lang.Object)>(com.example.callwithinloop.PointPoolObject_cls, $r2);
+
+        goto label2;
+    }
+
+    public void onClick(android.view.View)
+    {
+        com.example.callwithinloop.MainActivity $r0;
+        android.view.View $r1;
+        android.widget.Button $r2;
+        android.widget.TextView $r3;
+
+        $r0 := @this: com.example.callwithinloop.MainActivity;
+
+        $r1 := @parameter0: android.view.View;
+
+        $r2 = $r0.<com.example.callwithinloop.MainActivity: android.widget.Button testExceedPoolBtn>;
+
+        if $r1 != $r2 goto label1;
+
+        $r3 = $r0.<com.example.callwithinloop.MainActivity: android.widget.TextView testExceedPoolText>;
+
+        specialinvoke $r0.<com.example.callwithinloop.MainActivity: void testPool(int,android.widget.TextView)>(1000, $r3);
+
+     label1:
+        return;
+    }
+
+    public void onCreate(android.os.Bundle)
+    {
+        com.example.callwithinloop.MainActivity $r0;
+        android.os.Bundle $r1;
+        android.view.View $r2;
+        android.widget.Button $r3;
+        android.widget.TextView $r4;
+        util.objectpool.BufferPool bufLocal;
+
+        $r0 := @this: com.example.callwithinloop.MainActivity;
+
+        $r1 := @parameter0: android.os.Bundle;
+
+        specialinvoke $r0.<android.app.Activity: void onCreate(android.os.Bundle)>($r1);
+
+        bufLocal = new util.objectpool.BufferPool;
+
+        specialinvoke bufLocal.<util.objectpool.BufferPool: void <init>()>();
+
+        <com.example.callwithinloop.MainActivity: util.objectpool.BufferPool buffPool> = bufLocal;
+
+        virtualinvoke $r0.<com.example.callwithinloop.MainActivity: void setContentView(int)>(2130903064);
+
+        $r2 = virtualinvoke $r0.<com.example.callwithinloop.MainActivity: android.view.View findViewById(int)>(2131034172);
+
+        $r3 = (android.widget.Button) $r2;
+
+        $r0.<com.example.callwithinloop.MainActivity: android.widget.Button testExceedPoolBtn> = $r3;
+
+        $r2 = virtualinvoke $r0.<com.example.callwithinloop.MainActivity: android.view.View findViewById(int)>(2131034173);
+
+        $r4 = (android.widget.TextView) $r2;
+
+        $r0.<com.example.callwithinloop.MainActivity: android.widget.TextView testExceedPoolText> = $r4;
+
+        $r3 = $r0.<com.example.callwithinloop.MainActivity: android.widget.Button testExceedPoolBtn>;
+
+        virtualinvoke $r3.<android.widget.Button: void setOnClickListener(android.view.View$OnClickListener)>($r0);
+
+        return;
+    }
+}

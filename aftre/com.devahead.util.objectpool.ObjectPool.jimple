@@ -1,0 +1,122 @@
+public class com.devahead.util.objectpool.ObjectPool extends java.lang.Object
+{
+    protected final int MAX_FREE_OBJECT_INDEX;
+    protected int freeObjectIndex;
+    public java.util.ArrayList freeObjects;
+
+    public void <init>(int)
+    {
+        com.devahead.util.objectpool.ObjectPool $r0;
+        int $i0;
+        java.util.ArrayList $r1;
+
+        $r0 := @this: com.devahead.util.objectpool.ObjectPool;
+
+        $i0 := @parameter0: int;
+
+        specialinvoke $r0.<java.lang.Object: void <init>()>();
+
+        $r0.<com.devahead.util.objectpool.ObjectPool: int freeObjectIndex> = -1;
+
+        $r1 = new java.util.ArrayList;
+
+        specialinvoke $r1.<java.util.ArrayList: void <init>(int)>($i0);
+
+        $r0.<com.devahead.util.objectpool.ObjectPool: java.util.ArrayList freeObjects> = $r1;
+
+        $i0 = $i0 + -1;
+
+        $r0.<com.devahead.util.objectpool.ObjectPool: int MAX_FREE_OBJECT_INDEX> = $i0;
+
+        return;
+    }
+
+    public void freeObject(java.lang.Object)
+    {
+        com.devahead.util.objectpool.ObjectPool $r0;
+        java.lang.Object $r1;
+        int $i0, $i1;
+        java.util.ArrayList $r2;
+        java.lang.Throwable $r3;
+
+        $r0 := @this: com.devahead.util.objectpool.ObjectPool;
+
+        $r1 := @parameter0: java.lang.Object;
+
+        entermonitor $r0;
+
+        if $r1 == null goto label2;
+
+     label1:
+        $i0 = $r0.<com.devahead.util.objectpool.ObjectPool: int freeObjectIndex>;
+
+        $i1 = $r0.<com.devahead.util.objectpool.ObjectPool: int MAX_FREE_OBJECT_INDEX>;
+
+        if $i0 >= $i1 goto label2;
+
+        $i1 = $r0.<com.devahead.util.objectpool.ObjectPool: int freeObjectIndex>;
+
+        $i1 = $i1 + 1;
+
+        $r0.<com.devahead.util.objectpool.ObjectPool: int freeObjectIndex> = $i1;
+
+        $r2 = $r0.<com.devahead.util.objectpool.ObjectPool: java.util.ArrayList freeObjects>;
+
+        virtualinvoke $r2.<java.util.ArrayList: boolean add(java.lang.Object)>($r1);
+
+     label2:
+        exitmonitor $r0;
+
+        return;
+
+     label3:
+        $r3 := @caughtexception;
+
+        exitmonitor $r0;
+
+        throw $r3;
+
+        catch java.lang.Throwable from label1 to label2 with label3;
+    }
+
+    public java.lang.Object getObject()
+    {
+        com.devahead.util.objectpool.ObjectPool $r0;
+        java.util.ArrayList $r1;
+        int $i0;
+        java.lang.Object $r2;
+
+        $r0 := @this: com.devahead.util.objectpool.ObjectPool;
+
+        $r1 = $r0.<com.devahead.util.objectpool.ObjectPool: java.util.ArrayList freeObjects>;
+
+        $i0 = $r0.<com.devahead.util.objectpool.ObjectPool: int freeObjectIndex>;
+
+        $r2 = virtualinvoke $r1.<java.util.ArrayList: java.lang.Object get(int)>($i0);
+
+        $i0 = $r0.<com.devahead.util.objectpool.ObjectPool: int freeObjectIndex>;
+
+        $i0 = $i0 + -1;
+
+        $r0.<com.devahead.util.objectpool.ObjectPool: int freeObjectIndex> = $i0;
+
+        return $r2;
+    }
+
+    public boolean hasObject()
+    {
+        com.devahead.util.objectpool.ObjectPool $r0;
+        int $i0;
+
+        $r0 := @this: com.devahead.util.objectpool.ObjectPool;
+
+        $i0 = $r0.<com.devahead.util.objectpool.ObjectPool: int freeObjectIndex>;
+
+        if $i0 != -1 goto label1;
+
+        return 0;
+
+     label1:
+        return 1;
+    }
+}

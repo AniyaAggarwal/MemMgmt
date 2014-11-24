@@ -1,7 +1,0 @@
-public interface  util.objectpool.PoolObject extends java.lang.Object
-{
-
-    public abstract void initializePoolObject();
-
-    public abstract void finalizePoolObject();
-}

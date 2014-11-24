@@ -1,0 +1,22 @@
+public final class com.example.callwithinloop.R$integer extends java.lang.Object
+{
+    public static final int abc_max_action_buttons;
+
+    public void <init>()
+    {
+        com.example.callwithinloop.R$integer $r0;
+
+        $r0 := @this: com.example.callwithinloop.R$integer;
+
+        specialinvoke $r0.<java.lang.Object: void <init>()>();
+
+        return;
+    }
+
+    public static void <clinit>()
+    {
+        <com.example.callwithinloop.R$integer: int abc_max_action_buttons> = 2131296256;
+
+        return;
+    }
+}

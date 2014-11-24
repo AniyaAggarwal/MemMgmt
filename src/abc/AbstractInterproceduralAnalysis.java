@@ -75,12 +75,13 @@ public abstract class AbstractInterproceduralAnalysis {
     public static final boolean doCheck = false;
 
     protected CallGraph     cg;        		// analysed call-graph
-    protected DirectedGraph dg;        		// filtered trimed call-graph
+   // protected DirectedGraph dg;        		// filtered trimed call-graph
+    public DirectedGraph dg;
     protected Map data;                		// SootMethod -> summary
     protected Map<Object,Integer> order;    // SootMethod -> topo order
     protected Map unanalysed;          		// SootMethod -> summary
 
-
+    
     /** Initial summary value for analysed funtions. */
     protected abstract Object newInitialSummary();
     
@@ -242,7 +243,9 @@ public abstract class AbstractInterproceduralAnalysis {
 	this.dg         = new DirectedCallGraph(cg, filter, heads, verbose);
 	this.data       = new HashMap();
 	this.unanalysed = new HashMap();
-
+	
+	NewTest.dg = this.dg;	
+	
 	// construct reverse pseudo topological order on filtered methods
 	this.order = new HashMap();
 	Orderer o = new PseudoTopologicalOrderer();

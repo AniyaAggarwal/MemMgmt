@@ -1,0 +1,22 @@
+public final class com.example.callwithinloop.BuildConfig extends java.lang.Object
+{
+    public static final boolean DEBUG;
+
+    public void <init>()
+    {
+        com.example.callwithinloop.BuildConfig $r0;
+
+        $r0 := @this: com.example.callwithinloop.BuildConfig;
+
+        specialinvoke $r0.<java.lang.Object: void <init>()>();
+
+        return;
+    }
+
+    public static void <clinit>()
+    {
+        <com.example.callwithinloop.BuildConfig: boolean DEBUG> = 1;
+
+        return;
+    }
+}

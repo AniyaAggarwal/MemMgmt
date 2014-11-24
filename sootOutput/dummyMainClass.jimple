@@ -4,7 +4,7 @@ class dummyMainClass
     public static void dummyMainMethod()
     {
         int $i0;
-        com.devahead.androidobjectpool.MainActivity $r0;
+        com.example.callwithinloop.MainActivity $r0;
         android.os.Bundle $r1;
         android.view.View $r2;
 
@@ -13,9 +13,9 @@ class dummyMainClass
      label1:
         if $i0 == 0 goto label3;
 
-        $r0 = new com.devahead.androidobjectpool.MainActivity;
+        $r0 = new com.example.callwithinloop.MainActivity;
 
-        specialinvoke $r0.<com.devahead.androidobjectpool.MainActivity: void <init>()>();
+        specialinvoke $r0.<com.example.callwithinloop.MainActivity: void <init>()>();
 
         if $i0 == 1 goto label3;
 
@@ -23,14 +23,14 @@ class dummyMainClass
 
         specialinvoke $r1.<android.os.Bundle: void <init>()>();
 
-        virtualinvoke $r0.<com.devahead.androidobjectpool.MainActivity: void onCreate(android.os.Bundle)>($r1);
+        virtualinvoke $r0.<com.example.callwithinloop.MainActivity: void onCreate(android.os.Bundle)>($r1);
 
      label2:
         $r2 = new android.view.View;
 
         specialinvoke $r2.<android.view.View: void <init>(android.content.Context)>($r0);
 
-        virtualinvoke $r0.<com.devahead.androidobjectpool.MainActivity: void onClick(android.view.View)>($r2);
+        virtualinvoke $r0.<com.example.callwithinloop.MainActivity: void onClick(android.view.View)>($r2);
 
         if $i0 == 3 goto label2;
 

@@ -26,7 +26,7 @@ class MyPointsToAnalysis{
 	}
 	
 	public void init(){
-		pta = Scene.v().getPointsToAnalysis();
+		pta = NewTest.pa;  //Scene.v().getPointsToAnalysis();
 		Chain<Local> allLocals = getAllLocals();
 		if(allLocals.size() <= 0)
 			return;
@@ -57,6 +57,8 @@ class MyPointsToAnalysis{
 	public Map<Local, Set<Local>> getLocalIntersects(Set<Local> set) {
 		
 		init();
+		
+		System.out.println(points_to_map);
 		Map<Local, Set<Local>> intersect_map = new HashMap<Local, Set<Local>>();
 		
 		for(Local local: set){

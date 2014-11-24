@@ -25,6 +25,7 @@ class NullnessAnalysis extends BackwardFlowAnalysis
         FlowSet sourceSet = (FlowSet)src,
         destSet = (FlowSet) dest;
         sourceSet.copy(destSet);
+        
 	 }
 
 	 protected void merge(Object src1, Object src2, Object dest){

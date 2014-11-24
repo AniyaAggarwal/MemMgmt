@@ -1,0 +1,70 @@
+public class com.example.callwithinloop.classB extends java.lang.Object
+{
+
+    public void <init>()
+    {
+        com.example.callwithinloop.classB $r0;
+
+        $r0 := @this: com.example.callwithinloop.classB;
+
+        specialinvoke $r0.<java.lang.Object: void <init>()>();
+
+        return;
+    }
+
+    public void useObjects(int)
+    {
+        com.example.callwithinloop.classB $r0;
+        int $i0, $i1;
+        com.example.callwithinloop.PointPoolObject $r1;
+        com.example.callwithinloop.PointPoolObject[] $r2;
+        util.objectpool.BufferPool bufPool;
+        java.lang.String com.example.callwithinloop.PointPoolObject_cls;
+        boolean $r1_flag;
+        java.lang.Object $r1_savedObj;
+
+        $r0 := @this: com.example.callwithinloop.classB;
+
+        $i0 := @parameter0: int;
+
+        bufPool = <com.example.callwithinloop.MainActivity: util.objectpool.BufferPool buffPool>;
+
+        com.example.callwithinloop.PointPoolObject_cls = "com.example.callwithinloop.PointPoolObject";
+
+        $r2 = newarray (com.example.callwithinloop.PointPoolObject)[$i0];
+
+        $i1 = 0;
+
+     label1:
+        if $i1 < $i0 goto label2;
+
+        return;
+
+     label2:
+        $r1_flag = virtualinvoke bufPool.<util.objectpool.BufferPool: boolean isObjInPool(java.lang.String)>(com.example.callwithinloop.PointPoolObject_cls);
+
+        if $r1_flag == 0 goto label3;
+
+        $r1_savedObj = virtualinvoke bufPool.<util.objectpool.BufferPool: java.lang.Object getObject(java.lang.String)>(com.example.callwithinloop.PointPoolObject_cls);
+
+        $r1 = (com.example.callwithinloop.PointPoolObject) $r1_savedObj;
+
+        virtualinvoke $r1.<com.example.callwithinloop.PointPoolObject: void initializePoolObject()>();
+
+        goto label4;
+
+     label3:
+        $r1 = new com.example.callwithinloop.PointPoolObject;
+
+        specialinvoke $r1.<com.example.callwithinloop.PointPoolObject: void <init>()>();
+
+     label4:
+        $r2[$i1] = $r1;
+
+        $i1 = $i1 + 1;
+		
+		virtualinvoke bufPool.<util.objectpool.BufferPool: void saveObject(java.lang.String,java.lang.Object)>(com.example.callwithinloop.PointPoolObject_cls, $r1);
+
+        goto label1;
+    }
+}
